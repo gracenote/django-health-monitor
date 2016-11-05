@@ -1,3 +1,6 @@
+# virtualenv
+env/
+
 # SQL Lite
 *.sqlite*
 
