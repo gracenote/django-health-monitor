@@ -1,21 +1,33 @@
-"""health_monitor URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.10/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
+# -*- coding: utf-8 -*-
 from django.conf.urls import url
-from django.contrib import admin
+from django.views.generic import TemplateView
+
+from . import views
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-]
+    url(
+        regex="^snapshot/~create/$",
+        view=views.snapshotCreateView.as_view(),
+        name='snapshot_create',
+    ),
+    url(
+        regex="^snapshot/(?P<pk>\d+)/~delete/$",
+        view=views.snapshotDeleteView.as_view(),
+        name='snapshot_delete',
+    ),
+    url(
+        regex="^snapshot/(?P<pk>\d+)/$",
+        view=views.snapshotDetailView.as_view(),
+        name='snapshot_detail',
+    ),
+    url(
+        regex="^snapshot/(?P<pk>\d+)/~update/$",
+        view=views.snapshotUpdateView.as_view(),
+        name='snapshot_update',
+    ),
+    url(
+        regex="^snapshot/$",
+        view=views.snapshotListView.as_view(),
+        name='snapshot_list',
+    ),
+	]
