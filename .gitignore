@@ -5,6 +5,9 @@ env3/
 # SQL Lite
 *.sqlite*
 
+# Django
+migrations/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
