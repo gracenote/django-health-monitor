@@ -1,0 +1,75 @@
+[
+  {
+    "model": "acr.provider",
+    "pk": 1,
+    "fields": {
+      "name": "CCR"
+    }
+  },
+  {
+    "model": "acr.bis",
+    "pk": 1,
+    "fields": {
+      "provider": 1,
+      "bis_id": 11111111,
+      "ip_address": "1.1.1.1"
+    }
+  },
+  {
+    "model": "acr.country",
+    "pk": 1,
+    "fields": {
+      "name": "USA"
+    }
+  },
+  {
+    "model": "acr.market",
+    "pk": 1,
+    "fields": {
+      "name": "National",
+      "country": 1
+    }
+  },
+  {
+    "model": "acr.subscriber",
+    "pk": 1,
+    "fields": {
+      "name": "audio"
+    }
+  },
+  {
+    "model": "acr.subscriber",
+    "pk": 2,
+    "fields": {
+      "name": "video"
+    }
+  },
+  {
+    "model": "acr.channel",
+    "pk": 1,
+    "fields": {
+      "bis": 1,
+      "market": 1,
+      "gn_name": "Test Channel 1",
+      "tui": 123456789,
+      "tag": 123456789,
+      "subscribed_live": 1,
+      "subscribed_shift": 1,
+      "subscribers": [1, 2]
+    }
+  },
+  {
+    "model": "acr.channel",
+    "pk": 2,
+    "fields": {
+      "bis": 1,
+      "market": 1,
+      "gn_name": "Test Channel 2",
+      "tui": 987654321,
+      "tag": 987654321,
+      "subscribed_live": 1,
+      "subscribed_shift": 0,
+      "subscribers": [1, 2]
+    }
+  }
+]
