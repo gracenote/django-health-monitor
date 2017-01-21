@@ -6,3 +6,4 @@ tox>=1.7.0
 django-model-utils>=2.0
 
 # Additional test requirements go here
+jsonfield
