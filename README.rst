@@ -1,5 +1,5 @@
 =============================
-Health Monitor
+Django Health Monitor
 =============================
 
 .. image:: https://badge.fury.io/py/django-health-monitor.png
@@ -18,7 +18,7 @@ The full documentation is at https://django-health-monitor.readthedocs.org.
 Quickstart
 ----------
 
-Install Health Monitor::
+Install Django Health Monitor::
 
     pip install django-health-monitor
 
