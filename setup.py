@@ -8,6 +8,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
+from setuptools import find_packages
+
 version = '0.1.1'
 
 if sys.argv[-1] == 'publish':
@@ -38,9 +40,7 @@ setup(
     author='Sean Chon',
     author_email='s@seanchon.com',
     url='https://github.com/seanchon/django-health-monitor',
-    packages=[
-        'health_monitor',
-    ],
+    packages=find_packages(),
     include_package_data=True,
     install_requires=["django-model-utils>=2.0", "jsonfield"],
     license="MIT",
