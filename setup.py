@@ -39,7 +39,7 @@ setup(
     author_email='s@seanchon.com',
     url='https://github.com/seanchon/django-health-monitor',
     packages=[
-        'django-health-monitor',
+        'health_monitor',
     ],
     include_package_data=True,
     install_requires=["django-model-utils>=2.0", "jsonfield"],
