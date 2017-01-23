@@ -31,21 +31,21 @@ readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
-    name='health_monitor',
+    name='django-health-monitor',
     version=version,
     description="""A Django  app to help track system health and give real-time feedback.""",
     long_description=readme + '\n\n' + history,
     author='Sean Chon',
     author_email='s@seanchon.com',
-    url='https://github.com/seanchon/health_monitor',
+    url='https://github.com/seanchon/django-health-monitor',
     packages=[
-        'health_monitor',
+        'django-health-monitor',
     ],
     include_package_data=True,
     install_requires=["django-model-utils>=2.0", "jsonfield"],
     license="MIT",
     zip_safe=False,
-    keywords='health_monitor',
+    keywords='django-health-monitor',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',

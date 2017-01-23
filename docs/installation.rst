@@ -4,9 +4,9 @@ Installation
 
 At the command line::
 
-    $ easy_install health_monitor
+    $ easy_install django-health-monitor
 
 Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv health_monitor
-    $ pip install health_monitor
+    $ mkvirtualenv django-health-monitor
+    $ pip install django-health-monitor

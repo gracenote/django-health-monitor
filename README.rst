@@ -2,29 +2,29 @@
 Health Monitor
 =============================
 
-.. image:: https://badge.fury.io/py/health_monitor.png
-    :target: https://badge.fury.io/py/health_monitor
+.. image:: https://badge.fury.io/py/django-health-monitor.png
+    :target: https://badge.fury.io/py/django-health-monitor
 
-.. image:: https://travis-ci.org/seanchon/health_monitor.png?branch=master
-    :target: https://travis-ci.org/seanchon/health_monitor
+.. image:: https://travis-ci.org/seanchon/django-health-monitor.png?branch=master
+    :target: https://travis-ci.org/seanchon/django-health-monitor
 
 A Django  app to help track system health and give real-time feedback.
 
 Documentation
 -------------
 
-The full documentation is at https://health_monitor.readthedocs.org.
+The full documentation is at https://django-health-monitor.readthedocs.org.
 
 Quickstart
 ----------
 
 Install Health Monitor::
 
-    pip install health_monitor
+    pip install django-health-monitor
 
 Then use it in a project::
 
-    import health_monitor
+    import django-health-monitor
 
 Features
 --------
