@@ -38,7 +38,7 @@ branches:
  only:
   - master
 script:
-  - flake8 --exclude=migrations health_monitor
+  # - flake8 --exclude=migrations health_monitor
   - coverage run manage.py test
 after_success:
   - coverage report
