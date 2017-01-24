@@ -25,19 +25,7 @@ health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
 health/<uid>/update/
 
 
-1. Create a new application using the command ``django-admin startapp health``.
-
-Inside of the newly created ``health`` application, modify ``models.py`` adding
-the following model::
-
-    import health_monitor
-
-
-    class Health(health_monitor.models.Health):
-        pass
-
-Run ``python manage.py makemigrations health`` followed by ``python manage.py migrate``
-
+1. Run ``python manage.py migrate health_monitor``
 
 2. Add url routes.
 
