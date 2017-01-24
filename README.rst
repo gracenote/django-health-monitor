@@ -8,6 +8,9 @@ Django Health Monitor
 .. image:: https://travis-ci.org/seanchon/django-health-monitor.png?branch=master
     :target: https://travis-ci.org/seanchon/django-health-monitor
 
+.. image:: https://img.shields.io/codecov/c/github/seanchon/django-health-monitor/master.svg
+    :target: https://codecov.io/gh/seanchon/django-health-monitor
+
 A Django app to help track the health of a system and give real-time feedback. (CURRENTLY IN DEVELOPMENT)
 
 The application consists of the following components:
