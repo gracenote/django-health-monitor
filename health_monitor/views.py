@@ -79,7 +79,7 @@ def update(request, uid=None, test_name=None):
     response_data = {}
 
     if request.GET:
-        for key, value in request.GET.iteritems():
+        for key, value in request.GET.items():
             kwargs[key] = value
 
     # calculate health score: red, orange, yellow, green
