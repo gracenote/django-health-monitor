@@ -12,25 +12,22 @@ To use Django Health Monitor in a project, there are three main steps:
 Set Up API
 ----------
 
-The following steps with create an API with the following endpoints, where <uid>
-is a unique identifier for the asset that is being tracked. The unique identifier
-must be an integer. The <subscriber> tag is a required attribute that must be attached
-to a test allowing unique combinations of tests. This will be described in the next section.
+The following steps with create an API with the following endpoints:
 
-<start_time> and <end_time> must be passed in UTC and in the format
-``'%Y-%m-%dT%H:%M:%SZ'``.
-
-- health/<uid>/read/
+- health/<uid>/
+- health/<uid>/update/<test_name>/?<params>
 - health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
-- health/<uid>/update/
+
+- <uid> is a unique identifier for the asset that is being tracked. The unique identifier must be an integer.
+- <test_name> is the name of a scoring logic test. Implementation will be described in the following section.
+- <subscriber> is a required attribute that must be attached to scoring logic allowing unique suites of tests. Implementation will be described in the following section.
+- The <start_time> and <end_time> are time filters and must be passed in UTC and in the format ``'%Y-%m-%dT%H:%M:%SZ'``.
 
 
 1. Run ``python manage.py migrate health_monitor`` to create a new table to track
 health instances.
 
-2. Add url routes.
-
-Inside of ``urls.py`` add the following routes::
+2. Add url routes. Inside of ``urls.py`` add the following routes::
 
     from health_monitor import views as health_monitor_views
 
