@@ -11,7 +11,7 @@ class Health(models.Model):
     change_date = models.DateTimeField(default=None, blank=True, null=True)
 
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
-        return unicode(self.uid) or u''
+        return unicode(self.uid)
 
     def add_state_keys(self, subscriber, test_name):
         # Initialize self.state for subscriber if needed
