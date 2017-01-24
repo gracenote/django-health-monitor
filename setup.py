@@ -42,7 +42,7 @@ setup(
     url='https://github.com/seanchon/django-health-monitor',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["django-model-utils>=2.0", "jsonfield"],
+    install_requires=["django-model-utils>=2.0", "django-jsonfield", "jsonfield"],
     license="MIT",
     zip_safe=False,
     keywords='django-health-monitor',
