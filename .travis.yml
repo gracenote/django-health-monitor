@@ -3,10 +3,18 @@
 language: python
 
 python:
-  - "3.5"
-  - "3.4"
-  - "3.3"
+  - "2.6"
   - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+
+  # PyPy versions
+  - "pypy"
+  - "pypy"  # PyPy2 2.5.0
+  - "pypy3" # Pypy3 2.4.0
+  - "pypy-5.3.1"
 
 before_install:
   - pip install codecov
@@ -15,7 +23,7 @@ before_install:
 install: pip install -r requirements_test.txt
 
 # command to run tests using coverage, e.g. python setup.py test
-script: coverage run --source health_monitor runtests.py
+script: coverage run --source health_monitor manage.py test
 
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
