@@ -17,14 +17,15 @@ python:
   - "pypy-5.3.1"
 
 before_install:
-  - pip install "coverage<4"
-  - pip install codecov
+  # - pip install "coverage==3.7.1"
+  # - pip install codecov
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -r requirements_test.txt
 
 # command to run tests using coverage, e.g. python setup.py test
-script: coverage3 run manage.py test
+# script: coverage3 run manage.py test
+script: python manage.py test
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+# after_success:
+#   - bash <(curl -s https://codecov.io/bash)
