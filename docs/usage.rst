@@ -15,7 +15,7 @@ Set Up API
 The following steps with create an API with the following endpoints, where <uid>
 is a unique identifier for the asset that is being tracked. The unique identifier
 must be an integer. The <subscriber> tag is a required attribute that must be attached
-to a test, and this will be described in the next section.
+to a test allowing unique combinations of tests. This will be described in the next section.
 
 <start_time> and <end_time> must be passed in the format ``'%Y-%m-%d %H:%M:%S'``.
 
@@ -34,3 +34,29 @@ the following model::
 
     class Health(health_monitor.models.Health):
         pass
+
+2. Add url routes
+
+Inside of ``urls.py`` add the following routes::
+
+    from health_monitor import views as health_monitor_views
+
+    urlpatterns = [
+        ...
+        url(r'^(?P<uid>[\w-]*)/$', health_monitor_views.read, name='read'),
+        url(r'^(?P<uid>[\w-]*)/history/(?P<subscriber>[\w-]*)/$', health_monitor_views.history, name='history'),
+        url(r'^(?P<uid>[\w-]*)/update/(?P<test_name>[\w-]*)/$', health_monitor_views.update, name='update'),
+        ...
+    ]
+
+
+Create Scoring Logic
+--------------------
+
+TODO
+
+
+Customize Notification Filters
+------------------------------
+
+TODO
