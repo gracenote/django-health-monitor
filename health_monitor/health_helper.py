@@ -22,7 +22,7 @@ def get_score(test_name, **kwargs):
     # get params to pass to method
     # checks against dispatcher dictionary for integrity
     params = {}
-    for key, value in kwargs.iteritems():
+    for key, value in kwargs.items():
         try:
             params[dispatcher[test_name]['params'][key]] = value
         except Exception:
@@ -100,7 +100,7 @@ def get_test_list(subscriber=None):
     if not subscriber:
         return sorted(dispatcher.keys())
     else:
-        for key, value in dispatcher.iteritems():
+        for key, value in dispatcher.items():
             if subscriber.lower() in value['subscriber']:
                 test_list.append(key)
 
