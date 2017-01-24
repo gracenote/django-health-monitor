@@ -18,14 +18,15 @@ The following steps with create an API with the following endpoints:
 - health/<uid>/update/<test_name>/?<params>
 - health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
 
+
 - <uid> is a unique identifier for the asset that is being tracked. The unique identifier must be an integer.
 - <test_name> is the name of a scoring logic test. Implementation will be described in the following section.
 - <subscriber> is a required attribute that must be attached to scoring logic allowing unique suites of tests. Implementation will be described in the following section.
 - The <start_time> and <end_time> are time filters and must be passed in UTC and in the format ``'%Y-%m-%dT%H:%M:%SZ'``.
 
 
-1. Run ``python manage.py migrate health_monitor`` to create a new table to track
-health instances.
+1. Run ``python manage.py migrate health_monitor`` to create a new table to track health instances.
+
 
 2. Add url routes. Inside of ``urls.py`` add the following routes::
 
