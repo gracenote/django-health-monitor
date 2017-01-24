@@ -18,6 +18,7 @@ The following steps with create an API with the following endpoints:
 - health/<uid>/update/<test_name>/?<params>
 - health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
 
+Where:
 
 - <uid> is a unique identifier for the asset that is being tracked. The unique identifier must be an integer.
 - <test_name> is the name of a scoring logic test. Implementation will be described in the following section.
