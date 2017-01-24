@@ -55,7 +55,8 @@ def calculate_severity(subscriber_state):
     """Return the highest score in state dict."""
     test_scores = [1, ]
     for test in subscriber_state.keys():
-        test_scores.append(subscriber_state[test]['score'])
+        if subscriber_state[test]['score']:
+            test_scores.append(subscriber_state[test]['score'])
 
     return max(test_scores)
 
@@ -63,10 +64,7 @@ def calculate_severity(subscriber_state):
 def get_health_keys(subscriber):
     """Return an array of tests associated with each subscriber."""
     dispatcher = get_dispatcher(original_dispatcher=True)
-    health_keys = []
-    for key in dispatcher.keys():
-        if subscriber in dispatcher[key]['subscriber']:
-            health_keys.append(key.decode('unicode-escape'))
+    health_keys = [x for x in dispatcher.keys() if subscriber in dispatcher[x]['subscriber']]
 
     return health_keys
 

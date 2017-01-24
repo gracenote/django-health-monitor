@@ -59,7 +59,7 @@ class HealthIntegrationTestCase(TestCase):
     #     uid2 = 987654321
     #
     #     response = self.client.get('/health/bulk_update/bis/11111111/bis_queue/?submit_queue_lv=0&submit_queue_sac=0&submit_queue_sc=0')
-    #     failures = [x['status'] for x in json.loads(response.content)['responses'] if x['status'] != 'success']
+    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
     #     self.assertEqual(len(failures), 0)
     #     health = Health.objects.get(uid=uid)
     #     self.assertEqual(health.state['audio']['bis_queue']['score'], 1)
@@ -68,7 +68,7 @@ class HealthIntegrationTestCase(TestCase):
     #
     #     response = self.client.get('/health/bulk_update/bis/11111111/bis_queue/?submit_queue_lv=501&submit_queue_sac=0&submit_queue_sc=101')
     #     health = Health.objects.get(uid=uid)
-    #     failures = [x['status'] for x in json.loads(response.content)['responses'] if x['status'] != 'success']
+    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
     #     self.assertEqual(len(failures), 0)
     #     self.assertEqual(health.state['audio']['bis_queue']['score'], 3)
     #     health = Health.objects.get(uid=uid2)
@@ -79,7 +79,7 @@ class HealthIntegrationTestCase(TestCase):
     #     uid2 = 987654321
     #
     #     response = self.client.get('/health/bulk_update/bis/11111111/bis_connection/?bis_status_lv=OK&bis_status_sac=OK&bis_status_sc=OK')
-    #     failures = [x['status'] for x in json.loads(response.content)['responses'] if x['status'] != 'success']
+    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
     #     self.assertEqual(len(failures), 0)
     #     health = Health.objects.get(uid=uid)
     #     self.assertEqual(health.state['audio']['bis_connection']['score'], 1)
@@ -87,7 +87,7 @@ class HealthIntegrationTestCase(TestCase):
     #     self.assertEqual(health.state['audio']['bis_connection']['score'], 1)
     #
     #     response = self.client.get('/health/bulk_update/bis/11111111/bis_connection/?bis_status_lv=BAD&bis_status_sac=BAD&bis_status_sc=BAD')
-    #     failures = [x['status'] for x in json.loads(response.content)['responses'] if x['status'] != 'success']
+    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
     #     self.assertEqual(len(failures), 0)
     #     health = Health.objects.get(uid=uid)
     #     self.assertEqual(health.state['audio']['bis_connection']['score'], 4)
