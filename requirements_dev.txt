@@ -1,4 +1,8 @@
-bumpversion==0.5.3
-Django==1.10.3
-django-model-utils==2.6
+appdirs==1.4.0
+Django==1.10.5
+django-health-monitor==0.1.2
+django-model-utils==2.6.1
 jsonfield==1.0.3
+packaging==16.8
+pyparsing==2.1.10
+six==1.10.0
