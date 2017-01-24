@@ -38,8 +38,8 @@ branches:
  only:
   - master
 script:
-  - flake8 --exclude=migrations allauth
-  - coverage run manage.py test allauth
+  - flake8 --exclude=migrations health_monitor
+  - coverage run manage.py test
 after_success:
   - coverage report
   - coveralls
