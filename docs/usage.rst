@@ -17,7 +17,8 @@ is a unique identifier for the asset that is being tracked. The unique identifie
 must be an integer. The <subscriber> tag is a required attribute that must be attached
 to a test allowing unique combinations of tests. This will be described in the next section.
 
-<start_time> and <end_time> must be passed in the format ``'%Y-%m-%d %H:%M:%S'``.
+<start_time> and <end_time> must be passed in UTC and in the format
+``'%Y-%m-%dT%H:%M:%SZ'``.
 
 health/<uid>/read/
 health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
@@ -35,7 +36,10 @@ the following model::
     class Health(health_monitor.models.Health):
         pass
 
-2. Add url routes
+Run ``python manage.py makemigrations health`` followed by ``python manage.py migrate``
+
+
+2. Add url routes.
 
 Inside of ``urls.py`` add the following routes::
 
