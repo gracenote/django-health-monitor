@@ -12,7 +12,7 @@ To use Django Health Monitor in a project, there are three main steps:
 Set Up API
 ----------
 
-The following steps with create an API with the following endpoints:
+The following steps create an API with the following endpoints:
 
 - health/<uid>/
 - health/<uid>/update/<test_name>/?<params>
@@ -21,8 +21,8 @@ The following steps with create an API with the following endpoints:
 Where:
 
 - <uid> is a unique identifier for the asset that is being tracked. The unique identifier must be an integer.
-- <test_name> is the name of a scoring logic test. Implementation will be described in the following section.
-- <subscriber> is a required attribute that must be attached to scoring logic allowing unique suites of tests. Implementation will be described in the following section.
+- <test_name> is the name of a scoring logic test.
+- <subscriber> is a required attribute that must be attached to scoring logic allowing unique suites of tests.
 - The <start_time> and <end_time> are time filters and must be passed in UTC and in the format ``'%Y-%m-%dT%H:%M:%SZ'``.
 
 
