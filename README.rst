@@ -24,13 +24,11 @@ The full documentation is at https://django-health-monitor.readthedocs.org.
 Quickstart
 ----------
 
-Install Django Health Monitor::
+django-health-monitor is available on `PyPI <https://pypi.python.org/pypi/django-health-monitor>`_ and can be installed using pip::
 
-    pip install django-health-monitor
+    $ pip install django-health-monitor
 
-Then use it in a project::
-
-    import health_monitor
+After installing, add ``'health_monitor'`` to ``INSTALLED_APPS`` in ``settings.py``.
 
 Features
 --------
