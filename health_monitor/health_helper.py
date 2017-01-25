@@ -1,6 +1,18 @@
-from health_monitor.config.dispatcher import get_dispatcher
-from health_monitor.config import scoring_logic
+"""Import user-defined configuration files declared in settings.py"""
+import sys
 
+from django.conf import settings
+sys.path.append(settings.HEALTH_MONITOR_CONFIG)
+
+try:
+    from dispatcher import get_dispatcher
+except ImportError as e:
+    raise ImportError('settings.HEALTH_MONITOR_CONFIG not properly set. See docs at https://django-health-monitor.readthedocs.io/en/latest/usage.html#configure-scoring-logic')
+
+try:
+    import scoring_logic
+except ImportError as e:
+    raise ImportError('settings.HEALTH_MONITOR_CONFIG not properly set. See docs at https://django-health-monitor.readthedocs.io/en/latest/usage.html#configure-scoring-logic')
 
 """
 Functions accessing health/config/scoring_logic.py

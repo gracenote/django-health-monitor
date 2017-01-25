@@ -1,3 +1,15 @@
+"""Import user-defined configuration files declared in settings.py"""
+import sys
+
+from django.conf import settings
+sys.path.append(settings.HEALTH_MONITOR_CONFIG)
+
+try:
+    from dispatcher import get_dispatcher
+except ImportError as e:
+    raise ImportError('settings.HEALTH_MONITOR_CONFIG not properly set. See docs at https://django-health-monitor.readthedocs.io/en/latest/usage.html#configure-scoring-logic')
+
+
 """Imports needed for generic views:
 
 health/read/
@@ -7,7 +19,6 @@ import datetime
 import json
 
 from django.http import HttpResponse
-from health_monitor.config.dispatcher import get_dispatcher
 from health_monitor import health_helper
 from health_monitor.models import Health
 
