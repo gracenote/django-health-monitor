@@ -7,12 +7,12 @@ sys.path.append(settings.HEALTH_MONITOR_CONFIG)
 try:
     from dispatcher import get_dispatcher
 except ImportError as e:
-    raise ImportError('settings.HEALTH_MONITOR_CONFIG not properly set. See docs at https://django-health-monitor.readthedocs.io/en/latest/usage.html#configure-scoring-logic')
+    raise ImportError(e)
 
 try:
     import scoring_logic
 except ImportError as e:
-    raise ImportError('settings.HEALTH_MONITOR_CONFIG not properly set. See docs at https://django-health-monitor.readthedocs.io/en/latest/usage.html#configure-scoring-logic')
+    raise ImportError(e)
 
 """
 Functions accessing health/config/scoring_logic.py
