@@ -26,7 +26,7 @@ def get_score(test_name, **kwargs):
     if test_name not in dispatcher.keys():
         raise LookupError("test for '{}' not implemented in scoring_logic.py".format(test_name))
 
-    method_name = dispatcher[test_name]['method']
+    method_name = dispatcher[test_name]['scoring_logic']
 
     # get method based on method_name
     method = getattr(scoring_logic, method_name)
@@ -52,17 +52,6 @@ Functions accessing health/config/dispatcher.py
 """
 
 
-def get_legend(subscriber):
-    """Return a tuple of tests and descriptions associated with each subscriber."""
-    legend = {}
-    dispatcher = get_dispatcher(original_dispatcher=True)
-    health_keys = get_health_keys(subscriber)
-    for key in health_keys:
-        legend[key.decode('unicode-escape')] = dispatcher[key]['description'] if 'description' in dispatcher[key] else None
-
-    return sorted(legend.items())
-
-
 def calculate_severity(subscriber_state):
     """Return the highest score in state dict."""
     test_scores = [1, ]
@@ -85,33 +74,3 @@ def get_subscribers_list_for_test(test_name):
     """Return a list of subscribers for a given test."""
     dispatcher = get_dispatcher()
     return dispatcher[test_name]['subscriber']
-
-
-# def get_latest_health_state(tui):
-#     """Return the latest health state for a given TUI."""
-#     health_state = {}
-#     for subscriber in Subscriber.objects.values_list():
-#         health_state[subscriber[1].lower()] = {}
-#     dispatcher = get_dispatcher(original_dispatcher=True)
-#
-#     for test in dispatcher.keys():
-#         score = get_latest_score(tui, test)
-#         for subscriber in dispatcher[test]['subscriber']:
-#             health_state[subscriber][test] = score
-#
-#     return health_state
-
-
-def get_test_list(subscriber=None):
-    """Get entire list of tests or those associated with a subscriber."""
-    test_list = []
-    dispatcher = get_dispatcher(original_dispatcher=True)
-
-    if not subscriber:
-        return sorted(dispatcher.keys())
-    else:
-        for key, value in dispatcher.items():
-            if subscriber.lower() in value['subscriber']:
-                test_list.append(key)
-
-    return sorted(test_list)
