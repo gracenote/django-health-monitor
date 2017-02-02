@@ -2,13 +2,8 @@
 
 dispatcher[test_name] = name of tests
 dispatcher[test_name]['scoring_logic'] = name of scoring test in scoring_logic.py
-dispatcher[test_name]['model'] = name of model that test results are written to
-dispatcher[test_name]['monitoring_url'] = url to get to test results
 dispatcher[test_name]['params'] = test result values to be passed to calculate score using scoring_logic.py
-dispatcher[test_name]['subscriber'] = list of subscribers which this test is revelant for
-dispatcher[test_name]['time'] = name of the column that time is recorded (cannot be used in conjunction with start_time, end_time)
-dispatcher[test_name]['start_time'] = name of the column that the start time is recorded (must be used with end_time)
-dispatcher[test_name]['end_time'] = name of the column that the end time is recorded (must be used with start_time)
+dispatcher[test_name]['group'] = list of subscribers which this test is revelant for
 
 Example:
     dispatcher = {
@@ -18,14 +13,14 @@ Example:
                 'heartrate': 'heartrate',
                 'arrhythmia': 'arrhythmia',
             },
-            'subscriber': ['doctor', ],
+            'group': ['doctor', ],
         },
         'sleep': {
             'scoring_logic': 'health_score_sleep',
             'params': {
                 'quality': 'quality',
             },
-            'subscriber': ['doctor', ],
+            'group': ['doctor', ],
             'start_time': 'start_time',
             'end_time': 'end_time',
         }
@@ -42,7 +37,7 @@ def get_dispatcher(original_dispatcher=False):
                 'bis_status_sac': 'bis_status_sac',
                 'bis_status_sc': 'bis_status_sc',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'bis_queue': {
             'scoring_logic': 'health_score_bis_queue',
@@ -51,21 +46,21 @@ def get_dispatcher(original_dispatcher=False):
                 'submit_queue_sac': 'submit_queue_sac',
                 'submit_queue_sc': 'submit_queue_sc',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'datarate': {
             'scoring_logic': 'health_score_datarate',
             'params': {
                 'datarate': 'datarate',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'directv_match': {
             'scoring_logic': 'health_score_directv_match',
             'params': {
                 'match_status': 'match_status',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'eam_api_match': {
             'description': 'TUI exists in EAM API',
@@ -74,7 +69,7 @@ def get_dispatcher(original_dispatcher=False):
                 'api_match': 'api_match',
                 'ens_status': 'ens_status',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'eam_api_status': {
             'description': 'Running state in EAM API is as expected',
@@ -84,7 +79,7 @@ def get_dispatcher(original_dispatcher=False):
                 'status': 'status',
                 'use': 'use',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'ec_status_audio': {
             'description': 'Audio status in "service ec status" is as expected',
@@ -92,7 +87,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'audio': 'audio',
             },
-            'subscriber': ['audio', 'video'],
+            'group': ['audio', 'video'],
         },
         'ec_status_video': {
             'description': 'Video status in "service ec status" is as expected',
@@ -100,7 +95,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'video': 'video',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'ec_status_network': {
             'description': 'Network status in "service ec status" is as expected',
@@ -108,7 +103,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'network': 'network',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'ec_status_qsize': {
             'description': 'QSize status in "service ec status" is as expected',
@@ -116,7 +111,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'qsize': 'qsize',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'ec_status_v_delay': {
             'description': 'V Delay status in "service ec status" is as expected',
@@ -124,7 +119,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'v_delay': 'v_delay',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'ec_status_v_fps': {
             'description': 'V FPS status in "service ec status" is as expected',
@@ -132,14 +127,14 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'v_fps': 'v_fps',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'epg_gap': {
             'scoring_logic': 'health_score_epg_gap',
             'params': {
                 'gap_count': 'gap_count',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
             'start_time': 'gap_start',
             'end_time': 'gap_end',
         },
@@ -148,7 +143,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'overlap_count': 'overlap_count',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
             'start_time': 'overlap_start',
             'end_time': 'overlap_end',
         },
@@ -158,7 +153,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'delay': 'delay',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'fingerprint_rate': {
             'scoring_logic': 'health_score_fingerprint_rate',
@@ -167,35 +162,35 @@ def get_dispatcher(original_dispatcher=False):
                 'lv_fingerprint_rate': 'lv_fingerprint_rate',
                 'sac_fingerprint_rate': 'sac_fingerprint_rate',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'harvest_fingerprint_rate': {
             'scoring_logic': 'health_score_harvest_fingerprint_rate',
             'params': {
                 'harvest_fingerprint_rate': 'harvest_fingerprint_rate',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'hive_production_audio_match': {
             'scoring_logic': 'health_score_hive_production_audio_match',
             'params': {
                 'matches': 'matches',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'mp3_match': {
             'scoring_logic': 'health_score_mp3_match',
             'params': {
                 'match_status': 'match_status',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'mp3_submit': {
             'scoring_logic': 'health_score_mp3_submit',
             'params': {
                 'mp3_present': 'mp3_present',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'stream_id_gracenote': {
             'description': 'Stream ID from channel list matches Samsung API',
@@ -203,7 +198,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'gracenote_exist': 'gracenote_exist',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'stream_id_gracenote_kr': {
             'description': 'Stream ID from EAM API matches Samsung API',
@@ -211,7 +206,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'enswers_match': 'enswers_match',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'subscribed': {
             'scoring_logic': 'health_score_subscribed',
@@ -220,7 +215,7 @@ def get_dispatcher(original_dispatcher=False):
                 'shift_tier': 'shift_tier',
                 'tui': 'tui',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
         },
         'vm_cpu': {
             'description': 'VM CPU is acceptable',
@@ -228,7 +223,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'cpu': 'cpu',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'vm_disk_free_percent': {
             'description': 'VM Disk Free is acceptable',
@@ -236,7 +231,7 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'disk_free_percent': 'disk_free_percent',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'vm_ping': {
             'description': 'VM responds to ping',
@@ -244,14 +239,14 @@ def get_dispatcher(original_dispatcher=False):
             'params': {
                 'ping': 'ping',
             },
-            'subscriber': ['video', ],
+            'group': ['video', ],
         },
         'volume': {
             'scoring_logic': 'health_score_volume',
             'params': {
                 'volume': 'volume',
             },
-            'subscriber': ['audio', ],
+            'group': ['audio', ],
             'uid': 'tui',
         },
     }

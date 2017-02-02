@@ -65,7 +65,7 @@ def calculate_severity(subscriber_state):
 def get_health_keys(subscriber):
     """Return an array of tests associated with each subscriber."""
     dispatcher = get_dispatcher(original_dispatcher=True)
-    health_keys = [x for x in dispatcher.keys() if subscriber in dispatcher[x]['subscriber']]
+    health_keys = [x for x in dispatcher.keys() if subscriber in dispatcher[x]['group']]
 
     return health_keys
 
@@ -73,4 +73,4 @@ def get_health_keys(subscriber):
 def get_subscribers_list_for_test(test_name):
     """Return a list of subscribers for a given test."""
     dispatcher = get_dispatcher()
-    return dispatcher[test_name]['subscriber']
+    return dispatcher[test_name]['group']
