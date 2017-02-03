@@ -15,7 +15,7 @@ except ImportError as e:
     raise ImportError(e)
 
 """
-Functions accessing health/config/scoring_logic.py
+Functions accessing scoring_logic.py
 """
 
 
@@ -48,16 +48,16 @@ def get_score(test_name, **kwargs):
 
 
 """
-Functions accessing health/config/dispatcher.py
+Functions accessing dispatcher.py
 """
 
 
-def calculate_severity(group_state):
+def calculate_severity(group, state):
     """Return the highest score in state dict."""
     test_scores = [1, ]
-    for test in group_state.keys():
-        if group_state[test]['score']:
-            test_scores.append(group_state[test]['score'])
+    for test in state[group].keys():
+        if state[group][test]['score']:
+            test_scores.append(state[group][test]['score'])
 
     return max(test_scores)
 

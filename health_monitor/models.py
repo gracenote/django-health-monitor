@@ -34,7 +34,7 @@ class Health(models.Model):
                 self.state[group][test_name]['updated_at'] = now
                 # update severity
                 old_severity = self.severity[group] if group in self.severity.keys() else None
-                self.severity[group] = health_helper.calculate_severity(self.state[group])
+                self.severity[group] = health_helper.calculate_severity(group, self.state)
 
                 if old_severity != self.severity[group]:
                     self.change_date = now
