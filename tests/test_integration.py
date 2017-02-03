@@ -1,5 +1,3 @@
-import json
-
 from django.test import TestCase
 from health_monitor.models import Health
 
@@ -54,46 +52,6 @@ class HealthIntegrationTestCase(TestCase):
         self.assertContains(response, 'changed to 1')
         self.assertEqual(health.state['audio']['mp3_match']['score'], 1)
 
-    # def test_bis_queue(self):
-    #     uid = 123456789
-    #     uid2 = 987654321
-    #
-    #     response = self.client.get('/health/bulk_update/bis/11111111/bis_queue/?submit_queue_lv=0&submit_queue_sac=0&submit_queue_sc=0')
-    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
-    #     self.assertEqual(len(failures), 0)
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertEqual(health.state['audio']['bis_queue']['score'], 1)
-    #     health = Health.objects.get(uid=uid2)
-    #     self.assertEqual(health.state['audio']['bis_queue']['score'], 1)
-    #
-    #     response = self.client.get('/health/bulk_update/bis/11111111/bis_queue/?submit_queue_lv=501&submit_queue_sac=0&submit_queue_sc=101')
-    #     health = Health.objects.get(uid=uid)
-    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
-    #     self.assertEqual(len(failures), 0)
-    #     self.assertEqual(health.state['audio']['bis_queue']['score'], 3)
-    #     health = Health.objects.get(uid=uid2)
-    #     self.assertEqual(health.state['audio']['bis_queue']['score'], 3)
-
-    # def test_bis_connection(self):
-    #     uid = 123456789
-    #     uid2 = 987654321
-    #
-    #     response = self.client.get('/health/bulk_update/bis/11111111/bis_connection/?bis_status_lv=OK&bis_status_sac=OK&bis_status_sc=OK')
-    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
-    #     self.assertEqual(len(failures), 0)
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertEqual(health.state['audio']['bis_connection']['score'], 1)
-    #     health = Health.objects.get(uid=uid2)
-    #     self.assertEqual(health.state['audio']['bis_connection']['score'], 1)
-    #
-    #     response = self.client.get('/health/bulk_update/bis/11111111/bis_connection/?bis_status_lv=BAD&bis_status_sac=BAD&bis_status_sc=BAD')
-    #     failures = [x['status'] for x in json.loads(response.content.decode())['responses'] if x['status'] != 'success']
-    #     self.assertEqual(len(failures), 0)
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertEqual(health.state['audio']['bis_connection']['score'], 4)
-    #     health = Health.objects.get(uid=uid2)
-    #     self.assertEqual(health.state['audio']['bis_connection']['score'], 4)
-
     def test_epg_overlap(self):
         uid = 123456789
         response = self.client.get('/health/123456789/update/epg_overlap/?overlap_count=0')
@@ -115,30 +73,6 @@ class HealthIntegrationTestCase(TestCase):
         health = Health.objects.get(uid=uid)
         self.assertContains(response, 'changed to 2')
         self.assertEqual(health.state['audio']['epg_gap']['score'], 2)
-
-    # def test_subscribed(self):
-    #     uid = 123456789
-    #     uid2 = 987654321
-    #     response = self.client.get('/health/{}/update/subscribed/?tui={}&live_tier=1&shift_tier=1'.format(uid, uid))
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertContains(response, 'changed to 1')
-    #     self.assertEqual(health.state['audio']['subscribed']['score'], 1)
-    #     # Under subscribed shift
-    #     self.client.get('/health/{}/update/subscribed/?tui={}&live_tier=1&shift_tier=0'.format(uid, uid))
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertEqual(health.state['audio']['subscribed']['score'], 4)
-    #     # Under subscribed live
-    #     self.client.get('/health/{}/update/subscribed/?tui={}&live_tier=0&shift_tier=1'.format(uid, uid))
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertEqual(health.state['audio']['subscribed']['score'], 4)
-    #     # Over subscribed
-    #     self.client.get('/health/{}/update/subscribed/?tui={}&live_tier=1&shift_tier=1'.format(uid2, uid2))
-    #     health = Health.objects.get(uid=uid2)
-    #     self.assertEqual(health.state['audio']['subscribed']['score'], 2)
-    #     # test yes no values
-    #     self.client.get('/health/{}/update/subscribed/?tui={}&live_tier=Yes&shift_tier=No'.format(uid, uid))
-    #     health = Health.objects.get(uid=uid)
-    #     self.assertEqual(health.state['audio']['subscribed']['score'], 4)
 
     def test_eam_api_match(self):
         uid = 123456789
