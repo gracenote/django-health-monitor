@@ -3,7 +3,7 @@
 dispatcher[test_name] = name of tests
 dispatcher[test_name]['scoring_logic'] = name of scoring test in scoring_logic.py
 dispatcher[test_name]['params'] = test result values to be passed to calculate score using scoring_logic.py
-dispatcher[test_name]['group'] = list of subscribers which this test is revelant for
+dispatcher[test_name]['group'] = list of groups which this test is revelant for
 
 Example:
     dispatcher = {

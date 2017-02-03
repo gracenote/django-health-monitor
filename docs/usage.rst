@@ -16,13 +16,13 @@ The following steps create an API with the following endpoints:
 
 - health/<uid>/
 - health/<uid>/update/<test_name>/?<params>
-- health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
+- health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 
 Where:
 
 - <uid> is a unique identifier for the asset that is being tracked. The unique identifier must be an integer.
 - <test_name> is the name of a scoring logic test.
-- <subscriber> is a required attribute that must be attached to scoring logic allowing unique suites of tests.
+- <group> is a required attribute that must be attached to scoring logic allowing unique suites of tests.
 - The <start_time> and <end_time> are time filters and must be passed in UTC and in the format ``'%Y-%m-%dT%H:%M:%SZ'``.
 
 
@@ -36,7 +36,7 @@ Where:
     urlpatterns = [
         ...
         url(r'^health/(?P<uid>[\w-]*)/$', health_monitor_views.read, name='read'),
-        url(r'^health/(?P<uid>[\w-]*)/history/(?P<subscriber>[\w-]*)/$', health_monitor_views.history, name='history'),
+        url(r'^health/(?P<uid>[\w-]*)/history/(?P<group>[\w-]*)/$', health_monitor_views.history, name='history'),
         url(r'^health/(?P<uid>[\w-]*)/update/(?P<test_name>[\w-]*)/$', health_monitor_views.update, name='update'),
         ...
     ]

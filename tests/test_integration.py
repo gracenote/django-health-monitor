@@ -3,7 +3,7 @@ from health_monitor.models import Health
 
 
 class HealthIntegrationTestCase(TestCase):
-    def test_volume_for_subscriber_audio(self):
+    def test_volume_for_group_audio(self):
         uid = 123456789
         # change volume state to 2 and check severity
         response = self.client.get('/health/123456789/update/volume/?volume=-60')

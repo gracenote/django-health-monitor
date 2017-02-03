@@ -32,7 +32,7 @@ except ImportError:
 """Generic Views
 
 health/<uid>/read/
-health/<uid>/history/<subscriber>/?start_time=<start_time>&end_time=<end_time>
+health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 health/<uid>/update/
 """
 
@@ -56,7 +56,7 @@ def read(request, uid):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def history(request, uid, subscriber):
+def history(request, uid, group):
     """Generic view to return historical test results.
 
     Time should be passed in url in the format '%Y-%m-%d %H:%M:%S'
@@ -70,7 +70,7 @@ def history(request, uid, subscriber):
 
     response_data = {}
     dispatcher = get_dispatcher()
-    health_keys = health_helper.get_health_keys(subscriber)
+    health_keys = health_helper.get_health_keys(group)
 
     for test_name in health_keys:
         model = get_model('monitoring', dispatcher[test_name]['model'])
