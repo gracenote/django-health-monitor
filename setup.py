@@ -39,7 +39,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='Sean Chon',
     author_email='s@seanchon.com',
-    url='https://github.com/seanchon/django-health-monitor',
+    url='https://github.com/gracenote/django-health-monitor',
     packages=find_packages(),
     include_package_data=True,
     install_requires=["jsonfield"],
