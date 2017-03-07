@@ -18,8 +18,9 @@ cache:
 install:
  # pip >=8 dropped Python 3.2 support
  - pip install "pip<8.0.0" wheel
- - pip install "$DJANGO"
+ - pip install "$DJANGO" "coverage==3.7.1" coveralls "mock>=1.0.1"
  - pip install .
+ - pip install flake8
 matrix:
   exclude:
     - python: "3.5"
@@ -38,6 +39,6 @@ branches:
   - master
 script:
   # - flake8 --exclude=migrations health_monitor
-  - python manage.py test
+  - coverage run manage.py test
 after_success:
-  # - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
