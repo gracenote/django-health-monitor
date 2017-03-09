@@ -14,7 +14,7 @@
    limitations under the License.
 """
 
-"""Import user-defined configuration files declared in settings.py"""
+# Import user-defined configuration files declared in settings.py
 import sys
 
 from django.conf import settings
@@ -23,7 +23,7 @@ sys.path.append(settings.HEALTH_MONITOR_CONFIG)
 try:
     from dispatcher import get_dispatcher
 except ImportError as e:
-    raise ImportError('settings.HEALTH_MONITOR_CONFIG not properly set. See docs at https://django-health-monitor.readthedocs.io/en/latest/usage.html#configure-scoring-logic')
+    raise ImportError(e)
 
 
 """Imports needed for generic views:
@@ -31,6 +31,7 @@ except ImportError as e:
 health/read/
 health/update/
 """
+
 import datetime
 import json
 
@@ -48,8 +49,8 @@ except ImportError:
 """Generic Views
 
 health/<uid>/read/
-health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 health/<uid>/update/
+health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 """
 
 
@@ -69,6 +70,33 @@ def read(request, uid):
             'status': 'failure',
             'message': str(e)
         }
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def update(request, uid=None, test_name=None):
+    """Generic view to update health for a single UID."""
+    kwargs = {}
+    response_data = {}
+
+    if request.GET:
+        for key, value in request.GET.items():
+            kwargs[key] = value
+
+    # calculate health score: red, orange, yellow, green
+    try:
+        score = health_helper.get_score(test_name, **kwargs)
+    except LookupError as e:
+        response_data['status'] = 'error'
+        response_data['message'] = str(e)
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    health = Health.objects.get_or_create(uid=uid)[0]
+    health.update_score(test_name=test_name, score=score)
+
+    response_data['status'] = 'success'
+    response_data['score'] = score
+    response_data['message'] = '{} changed to {} for uid {}'.format(test_name, score, uid)
+
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
@@ -98,30 +126,3 @@ def history(request, uid, group):
             start_timerange = dispatcher[test_name]['start_time'] + '__gte'
             end_timerange = dispatcher[test_name]['end_time'] + '__lte'
             model.objects.filter(**{start_timerange: start_time}).filter(**{end_timerange: end_time})
-
-
-def update(request, uid=None, test_name=None):
-    """Generic view to update health for a single UID."""
-    kwargs = {}
-    response_data = {}
-
-    if request.GET:
-        for key, value in request.GET.items():
-            kwargs[key] = value
-
-    # calculate health score: red, orange, yellow, green
-    try:
-        score = health_helper.get_score(test_name, **kwargs)
-    except LookupError as e:
-        response_data['status'] = 'error'
-        response_data['message'] = str(e)
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
-
-    health = Health.objects.get_or_create(uid=uid)[0]
-    health.update_score(test_name=test_name, score=score)
-
-    response_data['status'] = 'success'
-    response_data['score'] = score
-    response_data['message'] = '{} changed to {} for uid {}'.format(test_name, score, uid)
-
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
