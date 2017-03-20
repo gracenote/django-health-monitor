@@ -22,7 +22,7 @@ from health_monitor import utils
 
 
 class Health(models.Model):
-    uid = models.IntegerField(unique=True, db_index=True, verbose_name="UID")
+    uid = models.CharField(unique=True, db_index=True, max_length=64, verbose_name="UID")
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
     change_date = models.DateTimeField(default=None, blank=True, null=True)
