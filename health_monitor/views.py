@@ -36,6 +36,9 @@ import datetime
 import json
 
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 from health_monitor import health_helper
 from health_monitor.models import Health
 
@@ -54,75 +57,73 @@ health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 """
 
 
-def read(request, uid):
-    """Generic view to read health for a single UID."""
-    try:
-        health = Health.objects.get(uid=uid)
-        response_data = {
-            'uid': health.uid,
-            'state': health.state,
-            'status': 'success',
-            'severity': health.severity,
-        }
-    except Exception as e:
-        response_data = {
-            'uid': uid,
-            'status': 'failure',
-            'message': str(e)
-        }
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
-
-
-def update(request, uid=None, test_name=None):
-    """Generic view to update health for a single UID."""
-    kwargs = {}
-    response_data = {}
-
-    if request.GET:
-        for key, value in request.GET.items():
-            kwargs[key] = value
-
-    # calculate health score: red, orange, yellow, green
-    try:
-        score = health_helper.get_score(test_name, **kwargs)
-    except LookupError as e:
-        response_data['status'] = 'error'
-        response_data['message'] = str(e)
+@method_decorator(csrf_exempt, name='dispatch')
+class HealthView(View):
+    def get(self, request, uid=None, test_name=None):
+        """"""
+        try:
+            health = Health.objects.get(uid=uid)
+            response_data = {
+                'uid': health.uid,
+                'state': health.state,
+                'status': 'success',
+                'severity': health.severity,
+            }
+        except Exception as e:
+            response_data = {
+                'uid': uid,
+                'status': 'failure',
+                'message': str(e)
+            }
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    health = Health.objects.get_or_create(uid=uid)[0]
-    health.update_score(test_name=test_name, score=score)
+    def post(self, request, uid=None, test_name=None):
+        """Generic view to update health for a single UID."""
+        kwargs = {}
+        response_data = {}
 
-    response_data['status'] = 'success'
-    response_data['score'] = score
-    response_data['message'] = '{} changed to {} for uid {}'.format(test_name, score, uid)
+        if request.POST:
+            for key, value in request.POST.items():
+                kwargs[key] = value
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+        # calculate health score: red, orange, yellow, green
+        try:
+            score = health_helper.get_score(test_name, **kwargs)
+        except LookupError as e:
+            response_data['status'] = 'error'
+            response_data['message'] = str(e)
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+        health = Health.objects.get_or_create(uid=uid)[0]
+        health.update_score(test_name=test_name, score=score)
 
-def history(request, uid, group):
-    """Generic view to return historical test results.
+        response_data['status'] = 'success'
+        response_data['score'] = score
+        response_data['message'] = '{} changed to {} for uid {}'.format(test_name, score, uid)
 
-    Time should be passed in url in the format '%Y-%m-%d %H:%M:%S'
-    Default start_time is two hours in the past.
-    Default end_time is now.
-    """
-    start_time = request.GET['start_time'] if 'start_time' in request.GET.keys() else datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    end_time = request.GET['end_time'] if 'end_time' in request.GET.keys() else datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    import ipdb
-    ipdb.set_trace()
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    response_data = {}
-    dispatcher = get_dispatcher()
-    health_keys = health_helper.get_health_keys(group)
-
-    for test_name in health_keys:
-        model = get_model('monitoring', dispatcher[test_name]['model'])
-        response_data[test_name] = {}
-        if 'time' in dispatcher[test_name].keys():
-            timerange = dispatcher[test_name]['time'] + '__range'
-            model.objects.filter(**{timerange: (start_time, end_time)})
-        elif 'start_time' in dispatcher[test_name].keys() and 'end_time' in dispatcher[test_name].keys():
-            start_timerange = dispatcher[test_name]['start_time'] + '__gte'
-            end_timerange = dispatcher[test_name]['end_time'] + '__lte'
-            model.objects.filter(**{start_timerange: start_time}).filter(**{end_timerange: end_time})
+    # def history(self, request, uid=None, group=None):
+    #     """Generic view to return historical test results.
+    #
+    #     Time should be passed in url in the format '%Y-%m-%d %H:%M:%S'
+    #     Default start_time is two hours in the past.
+    #     Default end_time is now.
+    #     """
+    #     start_time = request.GET['start_time'] if 'start_time' in request.GET.keys() else datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    #     end_time = request.GET['end_time'] if 'end_time' in request.GET.keys() else datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    #
+    #     response_data = {}
+    #     dispatcher = get_dispatcher()
+    #     health_keys = health_helper.get_health_keys(group)
+    #
+    #     for test_name in health_keys:
+    #         model = get_model('monitoring', dispatcher[test_name]['model'])
+    #         response_data[test_name] = {}
+    #         if 'time' in dispatcher[test_name].keys():
+    #             timerange = dispatcher[test_name]['time'] + '__range'
+    #             model.objects.filter(**{timerange: (start_time, end_time)})
+    #         elif 'start_time' in dispatcher[test_name].keys() and 'end_time' in dispatcher[test_name].keys():
+    #             start_timerange = dispatcher[test_name]['start_time'] + '__gte'
+    #             end_timerange = dispatcher[test_name]['end_time'] + '__lte'
+    #             model.objects.filter(**{start_timerange: start_time}).filter(**{end_timerange: end_time})
