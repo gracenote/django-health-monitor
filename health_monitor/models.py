@@ -56,3 +56,11 @@ class Health(models.Model):
         self.severity[group] = utils.calculate_severity(group, self.state)
         if old_severity != self.severity[group]:
             self.change_date = now
+
+    def delete_test_state(self, test_name):
+        """Delete test state"""
+        for group in self.state.keys():
+            if test_name in self.state[group].keys():
+                del(self.state[group][test_name])
+                self.severity[group] = utils.calculate_severity(group, self.state)
+        self.save()

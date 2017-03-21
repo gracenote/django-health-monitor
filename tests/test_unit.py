@@ -31,3 +31,29 @@ class HealthUnitTestCase(TestCase):
         health = Health.objects.get(uid=uid)
         self.assertEqual(health.state['doctor']['sleep']['score'], 1)
         self.assertEqual(health.severity['doctor'], 1)
+
+    def test_delete_test(self):
+        uid = 123456789
+        health = Health.objects.get_or_create(uid=uid)[0]
+
+        # set heart score to 2, check severity is 2
+        health.update_score(test_name='heart', score=2)
+        health = Health.objects.get(uid=uid)
+        self.assertEqual(health.state['doctor']['heart']['score'], 2)
+        self.assertEqual(health.severity['doctor'], 2)
+
+        # set sleep score to 3, check severity is 3
+        health.update_score(test_name='sleep', score=3)
+        health = Health.objects.get(uid=uid)
+        self.assertEqual(health.state['doctor']['sleep']['score'], 3)
+        self.assertEqual(health.severity['doctor'], 3)
+
+        # delete sleep test
+        health.delete_test_state(test_name='sleep')
+        self.assertTrue('sleep' not in health.state['doctor'].keys())
+        self.assertEqual(health.severity['doctor'], 2)
+
+        # delete heart test
+        health.delete_test_state(test_name='heart')
+        self.assertTrue('heart' not in health.state['doctor'].keys())
+        self.assertEqual(health.severity['doctor'], 1)
