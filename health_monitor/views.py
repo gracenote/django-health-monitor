@@ -61,20 +61,26 @@ health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 class HealthView(View):
     def get(self, request, uid=None, test_name=None):
         """"""
-        try:
-            health = Health.objects.get(uid=uid)
+        if not uid:
             response_data = {
-                'uid': health.uid,
-                'state': health.state,
-                'status': 'success',
-                'severity': health.severity,
+                'uids': [x.uid for x in Health.objects.all()],
+                'status': 'success'
             }
-        except Exception as e:
-            response_data = {
-                'uid': uid,
-                'status': 'failure',
-                'message': str(e)
-            }
+        else:
+            try:
+                health = Health.objects.get(uid=uid)
+                response_data = {
+                    'uid': health.uid,
+                    'state': health.state,
+                    'status': 'success',
+                    'severity': health.severity,
+                }
+            except Exception as e:
+                response_data = {
+                    'uid': uid,
+                    'status': 'failure',
+                    'message': str(e)
+                }
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     def post(self, request, uid=None, test_name=None):
@@ -101,6 +107,21 @@ class HealthView(View):
         response_data['score'] = score
         response_data['message'] = '{} changed to {} for uid {}'.format(test_name, score, uid)
 
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    def delete(self, request, uid=None, test_name=None):
+        if uid and not test_name:
+            try:
+                Health.objects.get(uid=uid).delete()
+                response_data = {
+                    'status': 'success',
+                    'message': '{} deleted'.format(uid)
+                }
+            except Exception as e:
+                response_data = {
+                    'status': 'failure',
+                    'message': str(e)
+                }
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     # def history(self, request, uid=None, group=None):

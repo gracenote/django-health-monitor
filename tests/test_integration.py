@@ -69,6 +69,30 @@ class HealthIntegrationTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content.decode())['status'], 'success')
 
+    def test_delete_asset(self):
+        # check 'joesmith' is not in list of uids
+        response = self.client.get('/health/')
+        self.assertTrue('joesmith' not in json.loads(response.content.decode())['uids'])
+
+        # check overall status does not exist
+        response = self.client.get('/health/joesmith/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content.decode())['status'], 'failure')
+
+        # post test result to 'joesmith'
+        response = self.client.post('/health/joesmith/heart/', {'heartrate': 100, 'arrhythmia': 0})
+        self.assertEqual(response.status_code, 200)
+
+        # check 'joesmith' is in list of uids
+        response = self.client.get('/health/')
+        self.assertTrue('joesmith' in json.loads(response.content.decode())['uids'])
+
+        # delete 'joesmith'
+        response = self.client.delete('/health/joesmith/')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/health/')
+        self.assertTrue('joesmith' not in json.loads(response.content.decode())['uids'])
+
     def test_update_wrong_test_name(self):
         response = self.client.post('/health/123456789/breath/', {'heartrate': 60, 'arrhythmia': 0})
         self.assertEqual(response.status_code, 200)
