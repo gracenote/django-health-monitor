@@ -1,45 +1,61 @@
-========
+=====
 Usage
-========
+=====
 
 To use Django Health Monitor in a project, there are three main steps:
 
-1. Set up API endpoint to handle test result updates.
+1. Configure API to handle test result updates.
 2. Configure scoring logic to give test results relative weighting of significance.
 3. Customize notification filters. (optional)
 
-
-Set Up API
-----------
+****************
+1. Configure API
+****************
 
 The following steps create an API with the following endpoints:
 
-- health/<uid>/
-- health/<uid>/update/<test_name>/?<params>
-- health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
+- /health/
+- /health/<uid>/
+- /health/<uid>/<test_name>/
 
 Where:
 
-- <uid> is a unique identifier for the asset that is being tracked. The unique identifier must be an integer.
-- <test_name> is the name of a scoring logic test.
-- <group> is a required attribute that must be attached to scoring logic allowing unique suites of tests.
-- The <start_time> and <end_time> are time filters and must be passed in UTC and in the format ``'%Y-%m-%dT%H:%M:%SZ'``.
+- <uid> is a unique identifier for the asset that is being tracked.
+- <test_name> is the name of a test associated with the asset. Scoring logic (below) will need to be configured before test scores can be posted to an asset.
 
 
-1. Run ``python manage.py migrate health_monitor`` to create a new table to track health instances.
+Create Health Models
+--------------------
+    models.py::
+
+        from health_monitor.models import Health
+
+        class HeartHealth(Health):
+            pass
 
 
-2. Add url routes. Inside of ``urls.py`` add the following routes::
+Create Health Views
+-------------------
+    views.py::
 
-    from health_monitor import views as health_monitor_views
+        from health_monitor.views import HealthView
 
-    urlpatterns = [
-        ...
-        url(r'^health/(?P<uid>[\w-]*)/$', health_monitor_views.read, name='read'),
-        url(r'^health/(?P<uid>[\w-]*)/history/(?P<group>[\w-]*)/$', health_monitor_views.history, name='history'),
-        url(r'^health/(?P<uid>[\w-]*)/update/(?P<test_name>[\w-]*)/$', health_monitor_views.update, name='update'),
-        ...
-    ]
+        class HearthHealthView(HealthView):
+            pass
+
+Map URLs to Views
+-----------------
+    urls.py::
+
+
+        from django.conf.urls import url
+        from views import HeartHealthView
+
+        urlpatterns = [
+            url(r'^health/$', HeartHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/$', HeartHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/(?P<test_name>[\w]*)/$', HeartHealthView.as_view()),
+        ]
 
 
 Configure Scoring Logic
