@@ -5,7 +5,7 @@ from health_monitor.models import Health
 
 
 class HealthIntegrationTestCase(TestCase):
-    def test_post_heart_test_result(self):
+    def test_post_test_result_int_uid(self):
         # check overall status does not exist
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 200)
@@ -16,28 +16,28 @@ class HealthIntegrationTestCase(TestCase):
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 2')
         health = Health.objects.get(uid=123456789)
-        self.assertEqual(health.severity['doctor'], 2)
+        self.assertEqual(health.severity['doctor']['score'], 2)
 
         # change heart state and severity to 1
         response = self.client.post('/health/123456789/heart/', {'heartrate': 60, 'arrhythmia': 0})
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 1')
         health = Health.objects.get(uid=123456789)
-        self.assertEqual(health.severity['doctor'], 1)
+        self.assertEqual(health.severity['doctor']['score'], 1)
 
         # change heart state and severity to 3
         response = self.client.post('/health/123456789/heart/', {'heartrate': 60, 'arrhythmia': 1})
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 3')
         health = Health.objects.get(uid=123456789)
-        self.assertEqual(health.severity['doctor'], 3)
+        self.assertEqual(health.severity['doctor']['score'], 3)
 
         # check overall status
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content.decode())['status'], 'success')
 
-    def update_charfield_uid(self):
+    def test_post_test_result_char_uid(self):
         # check overall status does not exist
         response = self.client.get('/health/joesmith/')
         self.assertEqual(response.status_code, 200)
@@ -48,21 +48,21 @@ class HealthIntegrationTestCase(TestCase):
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 2')
         health = Health.objects.get(uid='joesmith')
-        self.assertEqual(health.severity['doctor'], 2)
+        self.assertEqual(health.severity['doctor']['score'], 2)
 
         # change heart state and severity to 1
         response = self.client.post('/health/joesmith/heart/', {'heartrate': 60, 'arrhythmia': 0})
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 1')
         health = Health.objects.get(uid='joesmith')
-        self.assertEqual(health.severity['doctor'], 1)
+        self.assertEqual(health.severity['doctor']['score'], 1)
 
         # change heart state and severity to 3
         response = self.client.post('/health/joesmith/heart/', {'heartrate': 60, 'arrhythmia': 1})
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 3')
         health = Health.objects.get(uid='joesmith')
-        self.assertEqual(health.severity['doctor'], 3)
+        self.assertEqual(health.severity['doctor']['score'], 3)
 
         # check overall status
         response = self.client.get('/health/joesmith/')

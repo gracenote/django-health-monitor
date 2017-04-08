@@ -25,7 +25,6 @@ class Health(models.Model):
     uid = models.CharField(unique=True, db_index=True, max_length=64, verbose_name="UID")
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
-    change_date = models.DateTimeField(default=None, blank=True, null=True)
 
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
@@ -37,12 +36,11 @@ class Health(models.Model):
         if test_name not in self.state[group].keys():
             self.state[group][test_name] = {}
 
-    def _add_severity_group(self, group, test_name):
+    def _add_severity_group(self, group):
         """Add severity key for group if not present."""
         if group not in self.severity.keys():
             self.severity[group] = {}
-        if test_name not in self.severity[group].keys():
-            self.severity[group][test_name] = {}
+            self.severity[group]['updated_at'] = timezone.now()
 
     def _calculate_severity(self, group, state):
         """Return the highest score in state dict."""
@@ -53,24 +51,22 @@ class Health(models.Model):
 
         return max(test_scores)
 
-    def _update_severity(self, group, test_name):
+    def _update_severity(self, group):
         """Set group severity to max of scores."""
-        now = timezone.now()
         old_severity = self.severity[group] if group in self.severity.keys() else None
-        self.severity[group] = self._calculate_severity(group, self.state)
+        self.severity[group]['score'] = self._calculate_severity(group, self.state)
         if old_severity != self.severity[group]:
-            self.change_date = now
+            self.severity[group]['updated_at'] = timezone.now()
 
     def update_score(self, test_name, score):
         """Update the health based on the test name and score."""
-        now = timezone.now()
-
         for group in utils.get_group_list_for_test(test_name):
             if test_name in utils.get_health_keys(group):
                 self._add_state_group(group, test_name)
+                self._add_severity_group(group)
                 self.state[group][test_name]['score'] = score
-                self.state[group][test_name]['updated_at'] = now
-                self._update_severity(group, test_name)
+                self.state[group][test_name]['updated_at'] = timezone.now()
+                self._update_severity(group)
         self.save()
 
     def delete_test_state(self, test_name):
@@ -78,5 +74,5 @@ class Health(models.Model):
         for group in self.state.keys():
             if test_name in self.state[group].keys():
                 del(self.state[group][test_name])
-                self.severity[group] = self._calculate_severity(group, self.state)
+                self._update_severity(group)
         self.save()
