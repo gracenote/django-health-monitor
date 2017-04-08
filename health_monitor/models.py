@@ -18,7 +18,7 @@ from django.db import models
 from django.utils import timezone
 from jsonfield import JSONField
 
-from health_monitor import utils
+from health_monitor import scoring_helper
 
 
 class Health(models.Model):
@@ -60,8 +60,8 @@ class Health(models.Model):
 
     def update_score(self, test_name, score):
         """Update the health based on the test name and score."""
-        for group in utils.get_group_list_for_test(test_name):
-            if test_name in utils.get_health_keys(group):
+        for group in scoring_helper.get_group_list_for_test(test_name):
+            if test_name in scoring_helper.get_health_keys(group):
                 self._add_state_group(group, test_name)
                 self._add_severity_group(group)
                 self.state[group][test_name]['score'] = score

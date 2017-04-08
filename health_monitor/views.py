@@ -39,7 +39,7 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-from health_monitor import utils
+from health_monitor import scoring_helper
 from health_monitor.models import Health
 
 try:
@@ -94,7 +94,7 @@ class HealthView(View):
 
         # calculate health score: red, orange, yellow, green
         try:
-            score = utils.get_score(test_name, **kwargs)
+            score = scoring_helper.get_score(test_name, **kwargs)
         except LookupError as e:
             response_data['status'] = 'error'
             response_data['message'] = str(e)
