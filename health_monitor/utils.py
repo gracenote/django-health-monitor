@@ -68,16 +68,6 @@ Functions accessing dispatcher.py
 """
 
 
-def calculate_severity(group, state):
-    """Return the highest score in state dict."""
-    test_scores = [1, ]
-    for test in state[group].keys():
-        if state[group][test]['score']:
-            test_scores.append(state[group][test]['score'])
-
-    return max(test_scores)
-
-
 def get_health_keys(group):
     """Return an array of tests associated with each group."""
     dispatcher = get_dispatcher(original_dispatcher=True)

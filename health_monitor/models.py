@@ -30,12 +30,36 @@ class Health(models.Model):
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
 
-    def add_state_group(self, group, test_name):
+    def _add_state_group(self, group, test_name):
         """Add state key for group if not present."""
         if group not in self.state.keys():
             self.state[group] = {}
         if test_name not in self.state[group].keys():
             self.state[group][test_name] = {}
+
+    def _add_severity_group(self, group, test_name):
+        """Add severity key for group if not present."""
+        if group not in self.severity.keys():
+            self.severity[group] = {}
+        if test_name not in self.severity[group].keys():
+            self.severity[group][test_name] = {}
+
+    def _calculate_severity(self, group, state):
+        """Return the highest score in state dict."""
+        test_scores = [1, ]
+        for test in state[group].keys():
+            if state[group][test]['score']:
+                test_scores.append(state[group][test]['score'])
+
+        return max(test_scores)
+
+    def _update_severity(self, group, test_name):
+        """Set group severity to max of scores."""
+        now = timezone.now()
+        old_severity = self.severity[group] if group in self.severity.keys() else None
+        self.severity[group] = self._calculate_severity(group, self.state)
+        if old_severity != self.severity[group]:
+            self.change_date = now
 
     def update_score(self, test_name, score):
         """Update the health based on the test name and score."""
@@ -43,24 +67,16 @@ class Health(models.Model):
 
         for group in utils.get_group_list_for_test(test_name):
             if test_name in utils.get_health_keys(group):
-                self.add_state_group(group, test_name)
+                self._add_state_group(group, test_name)
                 self.state[group][test_name]['score'] = score
                 self.state[group][test_name]['updated_at'] = now
-                self.update_severity(group, test_name)
+                self._update_severity(group, test_name)
         self.save()
-
-    def update_severity(self, group, test_name):
-        """Set group severity to max of scores."""
-        now = timezone.now()
-        old_severity = self.severity[group] if group in self.severity.keys() else None
-        self.severity[group] = utils.calculate_severity(group, self.state)
-        if old_severity != self.severity[group]:
-            self.change_date = now
 
     def delete_test_state(self, test_name):
         """Delete test state"""
         for group in self.state.keys():
             if test_name in self.state[group].keys():
                 del(self.state[group][test_name])
-                self.severity[group] = utils.calculate_severity(group, self.state)
+                self.severity[group] = self._calculate_severity(group, self.state)
         self.save()

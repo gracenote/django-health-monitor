@@ -39,7 +39,7 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-from health_monitor import health_helper
+from health_monitor import utils
 from health_monitor.models import Health
 
 try:
@@ -59,7 +59,7 @@ health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 
 @method_decorator(csrf_exempt, name='dispatch')
 class HealthView(View):
-    def get(self, request, uid=None, test_name=None):
+    def get(self, request, uid=None, group=None, test_name=None):
         """"""
         if not uid:
             response_data = {
@@ -83,7 +83,7 @@ class HealthView(View):
                 }
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    def post(self, request, uid=None, test_name=None):
+    def post(self, request, uid=None, group=None, test_name=None):
         """Generic view to update health for a single UID."""
         kwargs = {}
         response_data = {}
@@ -94,7 +94,7 @@ class HealthView(View):
 
         # calculate health score: red, orange, yellow, green
         try:
-            score = health_helper.get_score(test_name, **kwargs)
+            score = utils.get_score(test_name, **kwargs)
         except LookupError as e:
             response_data['status'] = 'error'
             response_data['message'] = str(e)
@@ -109,7 +109,7 @@ class HealthView(View):
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    def delete(self, request, uid=None, test_name=None):
+    def delete(self, request, uid=None, group=None, test_name=None):
         if uid and not test_name:
             try:
                 Health.objects.get(uid=uid).delete()
