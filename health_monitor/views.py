@@ -20,27 +20,20 @@ import sys
 from django.conf import settings
 sys.path.append(settings.HEALTH_MONITOR_CONFIG)
 
-try:
-    from dispatcher import get_dispatcher
-except ImportError as e:
-    raise ImportError(e)
-
-
 """Imports needed for generic views:
 
 health/read/
 health/update/
 """
 
-import datetime
 import json
 
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-from health_monitor import scoring_helper
 from health_monitor.models import Health
+from health_monitor import scoring_helper
 
 try:
     from django.db.models.loading import get_model
@@ -64,24 +57,24 @@ class HealthView(View):
         if not uid:
             response_data = {
                 'uids': [x.uid for x in Health.objects.all()],
-                'status': 'success'
             }
+            status_code = 200
         else:
             try:
                 health = Health.objects.get(uid=uid)
                 response_data = {
                     'uid': health.uid,
                     'state': health.state,
-                    'status': 'success',
                     'severity': health.severity,
                 }
+                status_code = 200
             except Exception as e:
                 response_data = {
                     'uid': uid,
-                    'status': 'failure',
                     'message': str(e)
                 }
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+                status_code = 400
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     def post(self, request, uid=None, group=None, test=None):
         """Generic view to update health for a single UID."""

@@ -8,8 +8,7 @@ class HealthIntegrationTestCase(TestCase):
     def test_post_test_result_int_uid(self):
         # check overall status does not exist
         response = self.client.get('/health/123456789/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['status'], 'failure')
+        self.assertEqual(response.status_code, 400)
 
         # change heart state and severity to 2
         response = self.client.post('/health/123456789/heart/', {'heartrate': 100, 'arrhythmia': 0})
@@ -35,13 +34,11 @@ class HealthIntegrationTestCase(TestCase):
         # check overall status
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['status'], 'success')
 
     def test_post_test_result_char_uid(self):
         # check overall status does not exist
         response = self.client.get('/health/joesmith/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['status'], 'failure')
+        self.assertEqual(response.status_code, 400)
 
         # change heart state and severity to 2
         response = self.client.post('/health/joesmith/heart/', {'heartrate': 100, 'arrhythmia': 0})
@@ -67,7 +64,6 @@ class HealthIntegrationTestCase(TestCase):
         # check overall status
         response = self.client.get('/health/joesmith/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['status'], 'success')
 
     def test_delete_asset(self):
         # check 'joesmith' is not in list of uids
@@ -76,8 +72,7 @@ class HealthIntegrationTestCase(TestCase):
 
         # check overall status does not exist
         response = self.client.get('/health/joesmith/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['status'], 'failure')
+        self.assertEqual(response.status_code, 400)
 
         # post test result to 'joesmith'
         response = self.client.post('/health/joesmith/heart/', {'heartrate': 100, 'arrhythmia': 0})
