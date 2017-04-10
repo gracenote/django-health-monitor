@@ -1,3 +1,5 @@
+import time
+
 from django.test import TestCase
 from health_monitor.models import Health
 
@@ -67,3 +69,29 @@ class HealthUnitTestCase(TestCase):
         health = Health.objects.get(uid=uid)
         self.assertTrue(health.state['doctor']['heart']['updated'])
         self.assertTrue(health.severity['doctor']['updated'])
+
+    def test_change_update_date_on_score_change(self):
+        uid = 123456789
+        health = Health.objects.get_or_create(uid=uid)[0]
+
+        # set heart score to 2
+        health.update_score(test_name='heart', score=2)
+        health = Health.objects.get(uid=uid)
+
+        # set heart score to 3, check 'update' does change
+        old_state_time = health.state['doctor']['heart']['updated']
+        old_severity_time = health.severity['doctor']['updated']
+        time.sleep(0.0000001)
+        health.update_score(test_name='heart', score=3)
+        health = Health.objects.get(uid=uid)
+        self.assertNotEqual(old_state_time, health.state['doctor']['heart']['updated'])
+        self.assertNotEqual(old_severity_time, health.severity['doctor']['updated'])
+
+        # set heart score to 3, check 'update' does not change
+        old_state_time = health.state['doctor']['heart']['updated']
+        old_severity_time = health.severity['doctor']['updated']
+        time.sleep(0.0000001)
+        health.update_score(test_name='heart', score=3)
+        health = Health.objects.get(uid=uid)
+        self.assertEqual(old_state_time, health.state['doctor']['heart']['updated'])
+        self.assertEqual(old_severity_time, health.severity['doctor']['updated'])

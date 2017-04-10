@@ -15,7 +15,6 @@
 """
 
 from django.db import models
-from django.utils import timezone
 from jsonfield import JSONField
 
 from health_monitor import scoring_helper, utils
@@ -38,25 +37,16 @@ class Health(models.Model):
 
         return max(test_scores)
 
-    def _update_severity(self, group):
-        """Set group severity to max of scores."""
-        old_severity = self.severity[group]['score']
-        self.severity[group]['score'] = self._calculate_severity(group)
-        if not old_severity or old_severity != self.severity[group]:
-            self.severity[group]['updated'] = timezone.now()
-
     def update_score(self, test_name, score):
         """Update the health based on the test name and score."""
         for group in scoring_helper.get_group_list_for_test(test_name):
             if test_name in scoring_helper.get_health_keys(group):
                 if group not in self.state.keys():
                     self.state[group] = {}
-                self.state[group] = utils.init_dict(self.state[group], test_name)
-                self.state[group][test_name]['score'] = score
-                self.state[group][test_name]['updated'] = timezone.now()
-                self.severity = utils.init_dict(self.severity, group)
-                self.severity[group]['score'] = self._calculate_severity(group)
-                self.severity[group]['updated'] = timezone.now()
+                self.state[group] = utils.init_score_dict(self.state[group], test_name)
+                self.state[group][test_name] = utils.update_score_dict(self.state[group][test_name], score)
+                self.severity = utils.init_score_dict(self.severity, group)
+                self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
     def delete_test_state(self, test_name):
@@ -64,5 +54,5 @@ class Health(models.Model):
         for group in self.state.keys():
             if test_name in self.state[group].keys():
                 del(self.state[group][test_name])
-                self._update_severity(group)
+                self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
