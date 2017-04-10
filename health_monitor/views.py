@@ -32,14 +32,14 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-from health_monitor.models import Health
-from health_monitor import scoring_helper
-
 try:
     from django.db.models.loading import get_model
 except ImportError:
     from django.apps import apps
     get_model = apps.get_model
+
+from . import scoring_helper
+from .models import Health
 
 
 """Generic Views

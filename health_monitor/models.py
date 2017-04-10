@@ -17,7 +17,7 @@
 from django.db import models
 from jsonfield import JSONField
 
-from health_monitor import scoring_helper, utils
+from . import scoring_helper, utils
 
 
 class Health(models.Model):

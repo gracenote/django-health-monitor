@@ -15,7 +15,8 @@
 """
 
 from django.conf.urls import url
-from health_monitor import views
+
+from . import views
 
 
 urlpatterns = [
