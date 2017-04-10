@@ -81,7 +81,7 @@ class HealthUnitTestCase(TestCase):
         # set heart score to 3, check 'update' does change
         old_state_time = health.state['doctor']['heart']['updated']
         old_severity_time = health.severity['doctor']['updated']
-        time.sleep(0.0000001)
+        time.sleep(0.001)
         health.update_score(test_name='heart', score=3)
         health = Health.objects.get(uid=uid)
         self.assertNotEqual(old_state_time, health.state['doctor']['heart']['updated'])
@@ -90,7 +90,7 @@ class HealthUnitTestCase(TestCase):
         # set heart score to 3, check 'update' does not change
         old_state_time = health.state['doctor']['heart']['updated']
         old_severity_time = health.severity['doctor']['updated']
-        time.sleep(0.0000001)
+        time.sleep(0.001)
         health.update_score(test_name='heart', score=3)
         health = Health.objects.get(uid=uid)
         self.assertEqual(old_state_time, health.state['doctor']['heart']['updated'])

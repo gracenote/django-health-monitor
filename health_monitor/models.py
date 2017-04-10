@@ -28,12 +28,12 @@ class Health(models.Model):
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
 
-    def _calculate_severity(self, group):
+    def _calculate_severity(self, g):
         """Return the highest score in state dict."""
         test_scores = [1, ]
-        for test in self.state[group].keys():
-            if self.state[group][test]['score']:
-                test_scores.append(self.state[group][test]['score'])
+        for t in self.state[g].keys():
+            if self.state[g][t]['score']:
+                test_scores.append(self.state[g][t]['score'])
 
         return max(test_scores)
 
