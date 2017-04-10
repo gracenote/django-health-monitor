@@ -89,14 +89,13 @@ class HealthView(View):
         try:
             score = scoring_helper.get_score(test, **kwargs)
         except LookupError as e:
-            response_data['status'] = 'error'
             response_data['message'] = str(e)
-            return HttpResponse(json.dumps(response_data), content_type="application/json")
+            status_code = 400
+            return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
         health = Health.objects.get_or_create(uid=uid)[0]
         health.update_score(test=test, score=score)
 
-        response_data['status'] = 'success'
         response_data['score'] = score
         response_data['message'] = '{} changed to {} for uid {}'.format(test, score, uid)
 
@@ -107,15 +106,15 @@ class HealthView(View):
             try:
                 Health.objects.get(uid=uid).delete()
                 response_data = {
-                    'status': 'success',
                     'message': '{} deleted'.format(uid)
                 }
+                status_code = 200
             except Exception as e:
                 response_data = {
-                    'status': 'failure',
                     'message': str(e)
                 }
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+                status_code = 400
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     # def history(self, request, uid=None, group=None):
     #     """Generic view to return historical test results.

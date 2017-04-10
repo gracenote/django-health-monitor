@@ -88,13 +88,14 @@ class HealthIntegrationTestCase(TestCase):
         response = self.client.get('/health/')
         self.assertTrue('joesmith' not in json.loads(response.content.decode())['uids'])
 
+        # delete nonexistent asset
+        response = self.client.delete('/health/joesmith/')
+        self.assertEqual(response.status_code, 400)
+
     def test_update_wrong_test_name(self):
         response = self.client.post('/health/123456789/breath/', {'heartrate': 60, 'arrhythmia': 0})
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(json.loads(response.content.decode())['status'], 'error')
+        self.assertEqual(response.status_code, 400)
 
     def test_update_wrong_param(self):
         response = self.client.post('/health/123456789/heart/', {'breath': 1})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['status'], 'error')
+        self.assertEqual(response.status_code, 400)
