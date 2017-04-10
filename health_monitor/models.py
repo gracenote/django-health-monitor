@@ -28,6 +28,12 @@ class Health(models.Model):
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
 
+    def __get_tests(self, group):
+        return scoring_helper.get_health_keys(group)
+
+    def __get_groups(self, test):
+        return scoring_helper.get_group_list_for_test(test)
+
     def _calculate_severity(self, g):
         """Return the highest score in state dict."""
         test_scores = [1, ]
@@ -39,8 +45,8 @@ class Health(models.Model):
 
     def update_score(self, test, score):
         """Update the health based on the test name and score."""
-        for group in scoring_helper.get_group_list_for_test(test):
-            if test in scoring_helper.get_health_keys(group):
+        for group in self.__get_groups(test):
+            if test in self.__get_tests(group):
                 if group not in self.state.keys():
                     self.state[group] = {}
                 self.state[group] = utils.init_score_dict(self.state[group], test)
