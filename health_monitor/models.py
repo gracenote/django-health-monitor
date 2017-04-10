@@ -18,55 +18,45 @@ from django.db import models
 from django.utils import timezone
 from jsonfield import JSONField
 
-from health_monitor import scoring_helper
+from health_monitor import scoring_helper, utils
 
 
 class Health(models.Model):
-    uid = models.CharField(unique=True, db_index=True, max_length=64, verbose_name="UID")
+    uid = models.CharField(primary_key=True, db_index=True, max_length=64, verbose_name="UID")
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
 
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
 
-    def _add_state_group(self, group, test_name):
-        """Add state key for group if not present."""
-        if group not in self.state.keys():
-            self.state[group] = {}
-        if test_name not in self.state[group].keys():
-            self.state[group][test_name] = {}
-
-    def _add_severity_group(self, group):
-        """Add severity key for group if not present."""
-        if group not in self.severity.keys():
-            self.severity[group] = {}
-            self.severity[group]['updated_at'] = timezone.now()
-
-    def _calculate_severity(self, group, state):
+    def _calculate_severity(self, group):
         """Return the highest score in state dict."""
         test_scores = [1, ]
-        for test in state[group].keys():
-            if state[group][test]['score']:
-                test_scores.append(state[group][test]['score'])
+        for test in self.state[group].keys():
+            if self.state[group][test]['score']:
+                test_scores.append(self.state[group][test]['score'])
 
         return max(test_scores)
 
     def _update_severity(self, group):
         """Set group severity to max of scores."""
-        old_severity = self.severity[group] if group in self.severity.keys() else None
-        self.severity[group]['score'] = self._calculate_severity(group, self.state)
-        if old_severity != self.severity[group]:
-            self.severity[group]['updated_at'] = timezone.now()
+        old_severity = self.severity[group]['score']
+        self.severity[group]['score'] = self._calculate_severity(group)
+        if not old_severity or old_severity != self.severity[group]:
+            self.severity[group]['updated'] = timezone.now()
 
     def update_score(self, test_name, score):
         """Update the health based on the test name and score."""
         for group in scoring_helper.get_group_list_for_test(test_name):
             if test_name in scoring_helper.get_health_keys(group):
-                self._add_state_group(group, test_name)
-                self._add_severity_group(group)
+                if group not in self.state.keys():
+                    self.state[group] = {}
+                self.state[group] = utils.init_dict(self.state[group], test_name)
                 self.state[group][test_name]['score'] = score
-                self.state[group][test_name]['updated_at'] = timezone.now()
-                self._update_severity(group)
+                self.state[group][test_name]['updated'] = timezone.now()
+                self.severity = utils.init_dict(self.severity, group)
+                self.severity[group]['score'] = self._calculate_severity(group)
+                self.severity[group]['updated'] = timezone.now()
         self.save()
 
     def delete_test_state(self, test_name):

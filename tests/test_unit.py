@@ -65,5 +65,5 @@ class HealthUnitTestCase(TestCase):
         # set heart score to 2, check severity is 2
         health.update_score(test_name='heart', score=2)
         health = Health.objects.get(uid=uid)
-        self.assertTrue(health.state['doctor']['heart']['updated_at'])
-        self.assertTrue(health.severity['doctor']['updated_at'])
+        self.assertTrue(health.state['doctor']['heart']['updated'])
+        self.assertTrue(health.severity['doctor']['updated'])
