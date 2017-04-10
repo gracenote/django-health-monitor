@@ -35,14 +35,14 @@ Functions accessing scoring_logic.py
 """
 
 
-def get_score(test_name, **kwargs):
+def get_score(test, **kwargs):
     """Calculate a score red=4, orange=3, yellow=2, green=1 based off of the scoring logic."""
     # for integrity purposes, if method_name is not in dispatcher, raise Exception
     dispatcher = get_dispatcher()
-    if test_name not in dispatcher.keys():
-        raise LookupError("test for '{}' not implemented in scoring_logic.py".format(test_name))
+    if test not in dispatcher.keys():
+        raise LookupError("test for '{}' not implemented in scoring_logic.py".format(test))
 
-    method_name = dispatcher[test_name]['scoring_logic']
+    method_name = dispatcher[test]['scoring_logic']
 
     # get method based on method_name
     method = getattr(scoring_logic, method_name)
@@ -52,9 +52,9 @@ def get_score(test_name, **kwargs):
     params = {}
     for key, value in kwargs.items():
         try:
-            params[dispatcher[test_name]['params'][key]] = value
+            params[dispatcher[test]['params'][key]] = value
         except Exception:
-            raise LookupError('param \'{}\' not implemented in test for \'{}\' in scoring_logic.py'.format(key, test_name))
+            raise LookupError('param \'{}\' not implemented in test for \'{}\' in scoring_logic.py'.format(key, test))
 
     try:
         return method(**params)
@@ -76,7 +76,7 @@ def get_health_keys(group):
     return health_keys
 
 
-def get_group_list_for_test(test_name):
+def get_group_list_for_test(test):
     """Return a list of group for a given test."""
     dispatcher = get_dispatcher()
-    return dispatcher[test_name]['group']
+    return dispatcher[test]['group']

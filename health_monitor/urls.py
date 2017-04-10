@@ -21,6 +21,6 @@ from health_monitor import views
 urlpatterns = [
     url(r'^health/$', views.HealthView.as_view()),
     url(r'^health/(?P<uid>[\w]*)/$', views.HealthView.as_view()),
-    url(r'^health/(?P<uid>[\w]*)/(?P<test_name>[\w]*)/$', views.HealthView.as_view()),
+    url(r'^health/(?P<uid>[\w]*)/(?P<test>[\w]*)/$', views.HealthView.as_view()),
     # url(r'^health/(?P<uid>[\d]*)/history/(?P<group>[\w-]*)/$', views.history, name='history'),
 ]

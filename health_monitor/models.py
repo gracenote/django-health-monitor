@@ -37,22 +37,22 @@ class Health(models.Model):
 
         return max(test_scores)
 
-    def update_score(self, test_name, score):
+    def update_score(self, test, score):
         """Update the health based on the test name and score."""
-        for group in scoring_helper.get_group_list_for_test(test_name):
-            if test_name in scoring_helper.get_health_keys(group):
+        for group in scoring_helper.get_group_list_for_test(test):
+            if test in scoring_helper.get_health_keys(group):
                 if group not in self.state.keys():
                     self.state[group] = {}
-                self.state[group] = utils.init_score_dict(self.state[group], test_name)
-                self.state[group][test_name] = utils.update_score_dict(self.state[group][test_name], score)
+                self.state[group] = utils.init_score_dict(self.state[group], test)
+                self.state[group][test] = utils.update_score_dict(self.state[group][test], score)
                 self.severity = utils.init_score_dict(self.severity, group)
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
-    def delete_test_state(self, test_name):
+    def delete_test_state(self, test):
         """Delete test state"""
         for group in self.state.keys():
-            if test_name in self.state[group].keys():
-                del(self.state[group][test_name])
+            if test in self.state[group].keys():
+                del(self.state[group][test])
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()

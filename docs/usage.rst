@@ -16,12 +16,12 @@ The following steps create an API with the following endpoints:
 
 - /health/
 - /health/<uid>/
-- /health/<uid>/<test_name>/
+- /health/<uid>/<test>/
 
 Where:
 
 - <uid> is a unique identifier for the asset that is being tracked.
-- <test_name> is the name of a test associated with the asset. Scoring logic (below) will need to be configured before test scores can be posted to an asset.
+- <test> is the name of a test associated with the asset. Scoring logic (below) will need to be configured before test scores can be posted to an asset.
 
 
 Create Health Models
@@ -54,7 +54,7 @@ Map URLs to Views
         urlpatterns = [
             url(r'^health/$', HeartHealthView.as_view()),
             url(r'^health/(?P<uid>[\w]*)/$', HeartHealthView.as_view()),
-            url(r'^health/(?P<uid>[\w]*)/(?P<test_name>[\w]*)/$', HeartHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/(?P<test>[\w]*)/$', HeartHealthView.as_view()),
         ]
 
 

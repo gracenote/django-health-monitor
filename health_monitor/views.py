@@ -59,7 +59,7 @@ health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
 
 @method_decorator(csrf_exempt, name='dispatch')
 class HealthView(View):
-    def get(self, request, uid=None, group=None, test_name=None):
+    def get(self, request, uid=None, group=None, test=None):
         """"""
         if not uid:
             response_data = {
@@ -83,7 +83,7 @@ class HealthView(View):
                 }
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    def post(self, request, uid=None, group=None, test_name=None):
+    def post(self, request, uid=None, group=None, test=None):
         """Generic view to update health for a single UID."""
         kwargs = {}
         response_data = {}
@@ -94,23 +94,23 @@ class HealthView(View):
 
         # calculate health score: red, orange, yellow, green
         try:
-            score = scoring_helper.get_score(test_name, **kwargs)
+            score = scoring_helper.get_score(test, **kwargs)
         except LookupError as e:
             response_data['status'] = 'error'
             response_data['message'] = str(e)
             return HttpResponse(json.dumps(response_data), content_type="application/json")
 
         health = Health.objects.get_or_create(uid=uid)[0]
-        health.update_score(test_name=test_name, score=score)
+        health.update_score(test=test, score=score)
 
         response_data['status'] = 'success'
         response_data['score'] = score
-        response_data['message'] = '{} changed to {} for uid {}'.format(test_name, score, uid)
+        response_data['message'] = '{} changed to {} for uid {}'.format(test, score, uid)
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-    def delete(self, request, uid=None, group=None, test_name=None):
-        if uid and not test_name:
+    def delete(self, request, uid=None, group=None, test=None):
+        if uid and not test:
             try:
                 Health.objects.get(uid=uid).delete()
                 response_data = {
@@ -138,13 +138,13 @@ class HealthView(View):
     #     dispatcher = get_dispatcher()
     #     health_keys = health_helper.get_health_keys(group)
     #
-    #     for test_name in health_keys:
-    #         model = get_model('monitoring', dispatcher[test_name]['model'])
-    #         response_data[test_name] = {}
-    #         if 'time' in dispatcher[test_name].keys():
-    #             timerange = dispatcher[test_name]['time'] + '__range'
+    #     for test in health_keys:
+    #         model = get_model('monitoring', dispatcher[test]['model'])
+    #         response_data[test] = {}
+    #         if 'time' in dispatcher[test].keys():
+    #             timerange = dispatcher[test]['time'] + '__range'
     #             model.objects.filter(**{timerange: (start_time, end_time)})
-    #         elif 'start_time' in dispatcher[test_name].keys() and 'end_time' in dispatcher[test_name].keys():
-    #             start_timerange = dispatcher[test_name]['start_time'] + '__gte'
-    #             end_timerange = dispatcher[test_name]['end_time'] + '__lte'
+    #         elif 'start_time' in dispatcher[test].keys() and 'end_time' in dispatcher[test].keys():
+    #             start_timerange = dispatcher[test]['start_time'] + '__gte'
+    #             end_timerange = dispatcher[test]['end_time'] + '__lte'
     #             model.objects.filter(**{start_timerange: start_time}).filter(**{end_timerange: end_time})
