@@ -17,7 +17,7 @@
 from django.db import models
 from jsonfield import JSONField
 
-from . import scoring_helper, utils
+from . import utils
 
 
 class Health(models.Model):
@@ -27,12 +27,6 @@ class Health(models.Model):
 
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
-
-    def __get_tests(self, group):
-        return scoring_helper.get_health_keys(group)
-
-    def __get_groups(self, test):
-        return scoring_helper.get_group_list_for_test(test)
 
     def _calculate_severity(self, g):
         """Return the highest score in state dict."""
@@ -45,8 +39,8 @@ class Health(models.Model):
 
     def update_score(self, test, score):
         """Update the health based on the test name and score."""
-        for group in self.__get_groups(test):
-            if test in self.__get_tests(group):
+        for group in HealthTest._get_groups(test):
+            if test in HealthTest._get_tests(group):
                 if group not in self.state.keys():
                     self.state[group] = {}
                 self.state[group] = utils.init_score_dict(self.state[group], test)
@@ -62,3 +56,64 @@ class Health(models.Model):
                 del(self.state[group][test])
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
+
+
+class HealthTest(models.Model):
+    uid = models.CharField(db_index=True, max_length=64, verbose_name="UID")
+
+    test = None
+    groups = []
+
+    def __init__(self, uid, **kwargs):
+        h, _ = Health.objects.get_or_create(uid=uid)
+        h.update_score(test=self.test, score=self.get_score(**kwargs))
+
+    @staticmethod
+    def _get_tests(group):
+        return [t.test for t in HealthTest.__subclasses__() if group in t.groups]
+
+    @staticmethod
+    def _get_groups(test):
+        for t in HealthTest.__subclasses__():
+            if test == t.test:
+                return t.groups
+        return []
+
+    @staticmethod
+    def _get_model(test):
+        for t in HealthTest.__subclasses__():
+            if test == t.test:
+                return t
+        return None
+
+    def get_score(self, **kwargs):
+        score = self.score(**kwargs)
+        if type(score) != int:
+            raise TypeError('score() method should return an integer')
+        else:
+            return score
+
+
+class Heart(HealthTest):
+    test = 'heart'
+    groups = ['doctor']
+
+    def score(self, heartrate):
+        heartrate = int(heartrate)
+
+        if heartrate > 80:
+            return 2
+        else:
+            return 1
+
+
+class Sleep(HealthTest):
+    test = 'sleep'
+    groups = ['doctor']
+
+    def score(self, quality):
+        quality = int(quality)
+        if quality == 0:
+            return 4
+        else:
+            return 1

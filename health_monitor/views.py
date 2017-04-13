@@ -32,14 +32,8 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-try:
-    from django.db.models.loading import get_model
-except ImportError:
-    from django.apps import apps
-    get_model = apps.get_model
 
-from . import scoring_helper
-from .models import Health
+from .models import Health, HealthTest
 
 
 """Generic Views
@@ -87,15 +81,14 @@ class HealthView(View):
 
         # calculate health score: red, orange, yellow, green
         try:
-            score = scoring_helper.get_score(test, **kwargs)
+            model = HealthTest._get_model(test)
+            result = model(uid=uid, **kwargs)
         except LookupError as e:
             response_data['message'] = str(e)
             status_code = 400
             return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
-        health = Health.objects.get_or_create(uid=uid)[0]
-        health.update_score(test=test, score=score)
-
+        score = result.score(**kwargs)
         response_data['score'] = score
         response_data['message'] = '{} changed to {} for uid {}'.format(test, score, uid)
 
