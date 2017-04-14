@@ -14,34 +14,17 @@
    limitations under the License.
 """
 
-# Import user-defined configuration files declared in settings.py
-import sys
-
-from django.conf import settings
-sys.path.append(settings.HEALTH_MONITOR_CONFIG)
-
-"""Imports needed for generic views:
-
-health/read/
-health/update/
-"""
-
 import json
 
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views import View
+try:
+    from django.views import View
+except ImportError:
+    from django.views.generic import View
 
 from .models import Health, HealthTest
-
-
-"""Generic Views
-
-health/<uid>/read/
-health/<uid>/update/
-health/<uid>/history/<group>/?start_time=<start_time>&end_time=<end_time>
-"""
 
 
 @method_decorator(csrf_exempt, name='dispatch')
