@@ -92,28 +92,3 @@ class HealthTest(models.Model):
             raise TypeError('score() method should return an integer')
         else:
             return score
-
-
-class Heart(HealthTest):
-    test = 'heart'
-    groups = ['doctor']
-
-    def score(self, heartrate):
-        heartrate = int(heartrate)
-
-        if heartrate > 80:
-            return 2
-        else:
-            return 1
-
-
-class Sleep(HealthTest):
-    test = 'sleep'
-    groups = ['doctor']
-
-    def score(self, quality):
-        quality = int(quality)
-        if quality == 0:
-            return 4
-        else:
-            return 1

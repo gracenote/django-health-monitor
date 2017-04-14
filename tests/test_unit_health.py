@@ -2,10 +2,42 @@ import time
 
 from django.test import TestCase
 
-from health_monitor.models import Health
+from health_monitor.models import Health, HealthTest
 
 
 class HealthUnitTestCase(TestCase):
+    def setUp(self):
+        try:
+            class Heart(HealthTest):
+                test = 'heart'
+                groups = ['doctor']
+
+                def score(self, heartrate):
+                    heartrate = int(heartrate)
+
+                    if heartrate > 80:
+                        return 2
+                    else:
+                        return 1
+
+                class Meta(object):
+                    app_label = 'health_monitor'
+
+            class Sleep(HealthTest):
+                test = 'sleep'
+                groups = ['doctor']
+
+                def score(self, quality):
+                    quality = int(quality)
+                    if quality == 0:
+                        return 4
+                    else:
+                        return 1
+
+                class Meta(object):
+                    app_label = 'health_monitor'
+        except Exception:
+            pass
 
     def test_update_score(self):
         uid = 123456789
