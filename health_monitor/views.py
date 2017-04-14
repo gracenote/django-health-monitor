@@ -17,8 +17,6 @@
 import json
 
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 try:
     from django.views import View
 except ImportError:
@@ -27,7 +25,6 @@ except ImportError:
 from .models import Health, HealthTest
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class HealthView(View):
     def get(self, request, uid=None, group=None, test=None):
         """"""
