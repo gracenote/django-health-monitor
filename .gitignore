@@ -1,3 +1,6 @@
+# migrations
+migrations/
+
 # virtualenv
 env/
 env3/
