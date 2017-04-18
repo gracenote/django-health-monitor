@@ -20,8 +20,8 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^health/$', views.HealthView.as_view()),
-    url(r'^health/(?P<uid>[\w]*)/$', views.HealthView.as_view()),
-    url(r'^health/(?P<uid>[\w]*)/(?P<test>[\w]*)/$', views.HealthView.as_view()),
+    url(r'^health/$', views.BodyHealthView.as_view()),
+    url(r'^health/(?P<uid>[\w]*)/$', views.BodyHealthView.as_view()),
+    url(r'^health/(?P<uid>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
     # url(r'^health/(?P<uid>[\d]*)/history/(?P<group>[\w-]*)/$', views.history, name='history'),
 ]

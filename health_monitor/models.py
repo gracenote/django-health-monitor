@@ -21,7 +21,8 @@ from . import utils
 
 
 class Health(models.Model):
-    uid = models.CharField(primary_key=True, db_index=True, max_length=64, verbose_name="UID")
+    uid = models.CharField(primary_key=True, db_index=True, max_length=64)
+    # uid = models.IntegerField(primary_key=True, db_index=True)
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
 
@@ -57,15 +58,20 @@ class Health(models.Model):
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
+    class Meta(object):
+        abstract = True
+
 
 class HealthTest(models.Model):
-    uid = models.CharField(db_index=True, max_length=64, verbose_name="UID")
+    uid = models.CharField(db_index=True, max_length=64)
+    # uid = models.IntegerField(primary_key=True, db_index=True)
 
     test = None
     groups = []
+    health_model = Health
 
     def __init__(self, uid, **kwargs):
-        h, _ = Health.objects.get_or_create(uid=uid)
+        h, _ = self.health_model.objects.get_or_create(uid=uid)
         h.update_score(test=self.test, score=self.get_score(**kwargs))
 
     @staticmethod
@@ -92,3 +98,6 @@ class HealthTest(models.Model):
             raise TypeError('score() method should return an integer')
         else:
             return score
+
+    class Meta(object):
+        abstract = True

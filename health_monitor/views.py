@@ -22,7 +22,7 @@ try:
 except ImportError:
     from django.views.generic import View
 
-from .models import Health, HealthTest
+from .models import HealthTest
 
 
 class HealthView(View):
@@ -30,12 +30,12 @@ class HealthView(View):
         """"""
         if not uid:
             response_data = {
-                'uids': [x.uid for x in Health.objects.all()],
+                'uids': [x.uid for x in self.health_model.objects.all()],
             }
             status_code = 200
         else:
             try:
-                health = Health.objects.get(uid=uid)
+                health = self.health_model.objects.get(uid=uid)
                 response_data = {
                     'uid': health.uid,
                     'state': health.state,
@@ -77,7 +77,7 @@ class HealthView(View):
     def delete(self, request, uid=None, group=None, test=None):
         if uid and not test:
             try:
-                Health.objects.get(uid=uid).delete()
+                self.health_model.objects.get(uid=uid).delete()
                 response_data = {
                     'message': '{} deleted'.format(uid)
                 }

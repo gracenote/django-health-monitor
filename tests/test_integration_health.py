@@ -2,51 +2,10 @@ import json
 
 from django.test import TestCase
 
-from health_monitor.models import Health, HealthTest
+from .models import BodyHealth
 
 
 class HealthIntegrationTestCase(TestCase):
-    def setUp(self):
-        try:
-            class Heart(HealthTest):
-                test = 'heart'
-                groups = ['doctor']
-
-                def score(self, heartrate):
-                    heartrate = int(heartrate)
-                    if heartrate > 120:
-                        return 4
-                    elif heartrate > 100:
-                        return 3
-                    elif heartrate > 80:
-                        return 2
-                    else:
-                        return 1
-
-                class Meta(object):
-                    app_label = 'health_monitor'
-
-            class Sleep(HealthTest):
-
-                test = 'sleep'
-                groups = ['doctor']
-
-                def score(self, hours):
-                    hours = int(hours)
-                    if hours < 4:
-                        return 4
-                    elif hours < 6:
-                        return 3
-                    elif hours < 8:
-                        return 2
-                    else:
-                        return 1
-
-                class Meta(object):
-                    app_label = 'health_monitor'
-        except Exception:
-            pass
-
     def test_post_test_result_int_uid(self):
         # check overall status does not exist
         response = self.client.get('/health/123456789/')
@@ -56,14 +15,14 @@ class HealthIntegrationTestCase(TestCase):
         response = self.client.post('/health/123456789/heart/', {'heartrate': 100})
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 2')
-        health = Health.objects.get(uid=123456789)
+        health = BodyHealth.objects.get(uid=123456789)
         self.assertEqual(health.severity['doctor']['score'], 2)
 
         # change heart state and severity to 1
         response = self.client.post('/health/123456789/heart/', {'heartrate': 60})
         self.assertNotEqual(response.status_code, 404)
         self.assertContains(response, 'changed to 1')
-        health = Health.objects.get(uid=123456789)
+        health = BodyHealth.objects.get(uid=123456789)
         self.assertEqual(health.severity['doctor']['score'], 1)
 
         # check overall status
