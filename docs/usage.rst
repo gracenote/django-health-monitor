@@ -15,6 +15,9 @@ To use Django Health Monitor in an application, there are three main steps:
 
 Two main types of models are needed to track a system's state and to capture test results - `Health` and `HealthTest`.
 
+`Health`
+--------
+
 The base `Health` model serves the purpose of storing an asset's latest "health test" results from a variety tests, normalized as test "scores" in a "health state". Additionally, the highest result from the normalized test scores equals an asset's "health severity", which is used to quickly highlight which assets have an elevated status and should be investigated.
 
 To explain this concept, let's say that an overall `BodyHealth` depends on a "heart" test result and a "sleep" test result, each of which have four normalized test scores - 1 for good, 2 for mildly bad, 3 for moderately bad, and 4 for extremely bad. For a particular person, a "heart" score of 3 and a "sleep" score of 2 would result in a state of `{'heart': 3, 'sleep': 2}` and a severity of 3. If later the "sleep" score changed to 1, the state will change to `{'heart': 3, 'sleep': 1}` and remain a severity of 3 since severity is calculated as the max score within state. If later the "heart" score changed to 1, the resultant state would be `{'heart': 1, 'sleep': 1}` and the severity would drop to 1 indicating an overall "good" health.
@@ -29,6 +32,9 @@ Defining a child class of `Health` is as simple as the following where `uid` is 
         class BodyHealth(Health):
             uid = models.IntField(primary_key=True, db_index=True)
 
+
+`HealthTest`
+------------
 
 The base `HealthTest` model serves the purpose of storing historical test results, turning raw test results into normalized scores, and automatically updating the overall health. For this example, let us define two health tests - `HeartHealthTest` and `SleepHealthTest`.
 
