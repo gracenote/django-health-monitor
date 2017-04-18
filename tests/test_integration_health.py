@@ -14,8 +14,11 @@ class HealthIntegrationTestCase(TestCase):
 
                 def score(self, heartrate):
                     heartrate = int(heartrate)
-
-                    if heartrate > 80:
+                    if heartrate > 120:
+                        return 4
+                    elif heartrate > 100:
+                        return 3
+                    elif heartrate > 80:
                         return 2
                     else:
                         return 1
@@ -24,13 +27,18 @@ class HealthIntegrationTestCase(TestCase):
                     app_label = 'health_monitor'
 
             class Sleep(HealthTest):
+
                 test = 'sleep'
                 groups = ['doctor']
 
-                def score(self, quality):
-                    quality = int(quality)
-                    if quality == 0:
+                def score(self, hours):
+                    hours = int(hours)
+                    if hours < 4:
                         return 4
+                    elif hours < 6:
+                        return 3
+                    elif hours < 8:
+                        return 2
                     else:
                         return 1
 
