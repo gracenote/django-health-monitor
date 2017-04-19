@@ -21,8 +21,7 @@ from . import utils
 
 
 class Health(models.Model):
-    uid = models.CharField(primary_key=True, db_index=True, max_length=64)
-    # uid = models.IntegerField(primary_key=True, db_index=True)
+    uid = models.IntegerField(primary_key=True, db_index=True)
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
 
@@ -63,8 +62,7 @@ class Health(models.Model):
 
 
 class HealthTest(models.Model):
-    uid = models.CharField(db_index=True, max_length=64)
-    # uid = models.IntegerField(primary_key=True, db_index=True)
+    uid = models.IntegerField(primary_key=True, db_index=True)
 
     test = None
     groups = []
