@@ -28,7 +28,7 @@ class Heart(HealthTest):
 
 
 class Sleep(HealthTest):
-    hours = models.IntegerField()
+    hours = models.FloatField()
 
     health_model = BodyHealth
     groups = ['doctor']
@@ -36,7 +36,7 @@ class Sleep(HealthTest):
 
     @staticmethod
     def score(hours):
-        hours = int(hours)
+        hours = float(hours)
         if hours < 4:
             return 4
         elif hours < 6:
