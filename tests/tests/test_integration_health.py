@@ -2,7 +2,7 @@ import json
 
 from django.test import TestCase
 
-from .models import BodyHealth
+from ..models import BodyHealth
 
 
 class HealthIntegrationTestCase(TestCase):
