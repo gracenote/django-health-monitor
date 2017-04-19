@@ -43,7 +43,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["jsonfield"],
-    license="MIT",
+    license="Apache License 2.0",
     zip_safe=False,
     keywords='django-health-monitor',
     classifiers=[
