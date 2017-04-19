@@ -48,7 +48,8 @@ The base `HealthTest` model serves the purpose of storing historical test result
             groups = ['doctor']
             test = 'heart'
 
-            def score(self, heartrate):
+            @staticmethod
+            def score(heartrate):
                 heartrate = int(heartrate)
 
                 if heartrate > 120:
@@ -65,7 +66,10 @@ The base `HealthTest` model serves the purpose of storing historical test result
             groups = ['doctor']
             test = 'sleep'
 
+            @staticmethod
             def score(self, hours):
+                hours = float(hours)
+
                 if sleep < 4:
                     return 4
                 elif sleep < 6:
@@ -77,9 +81,16 @@ The base `HealthTest` model serves the purpose of storing historical test result
 
 When defining derived `HealthTest` models such as `HeartHealthTest` and `SleepHealthTest`, there are three attributes that are required - `health_model`, `groups`, and `test`.
 
-- `health_model` is the model that holds the states (defined above)
+- `health_model` is an association to the model that holds the states (defined above)
 - `groups` is a list of user-defined groups that each test will be associated with and there must be at minimum one group in order for test results to update the "health state"
 - `test` is a string that will be used to reference the test in the API (following section)
+
+Additionally, a static method for `score` is used to interpret raw test result values and normalize and return a "health score".
+
+Note:
+
+- The inputs for the `score` method should be type-converted to the correct type (int, float, char, etc.) to clean data that is passed incorrectly.
+- The `score` method also must return an integer score otherwise it will fail.
 
 ****************
 2. Configure API
