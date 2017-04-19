@@ -57,9 +57,9 @@ class HealthIntegrationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_update_wrong_test_name(self):
-        with self.assertRaises(TypeError):
-            self.client.post('/health/123456789/breath/', {'heartrate': 60})
+        response = self.client.post('/health/123456789/breath/', {'heartrate': 60})
+        self.assertEqual(response.status_code, 400)
 
     def test_update_wrong_param(self):
-        with self.assertRaises(TypeError):
-            self.client.post('/health/123456789/heart/', {'breath': 1})
+        response = self.client.post('/health/123456789/heart/', {'breath': 1})
+        self.assertEqual(response.status_code, 400)

@@ -70,12 +70,18 @@ class HealthTest(models.Model):
     groups = []
     health_model = Health
 
-    def __init__(self, uid, **kwargs):
-        h, _ = self.health_model.objects.get_or_create(uid=uid)
-        h.update_score(test=self.test, score=self.get_score(**kwargs))
+    @classmethod
+    def create(cls, uid, **kwargs):
+        health_test = cls(uid=uid, **kwargs)
+        health_test.save()
 
-    @staticmethod
-    def _get_tests(group):
+        h, _ = cls.health_model.objects.get_or_create(uid=uid)
+        h.update_score(test=cls.test, score=cls.get_score(**kwargs))
+
+        return health_test
+
+    @classmethod
+    def _get_tests(cls, group):
         return [t.test for t in HealthTest.__subclasses__() if group in t.groups]
 
     @staticmethod
@@ -90,10 +96,11 @@ class HealthTest(models.Model):
         for t in HealthTest.__subclasses__():
             if test == t.test:
                 return t
-        return None
+        raise TypeError('test {} does not exist'.format(test))
 
-    def get_score(self, **kwargs):
-        score = self.score(**kwargs)
+    @classmethod
+    def get_score(cls, **kwargs):
+        score = cls.score(**kwargs)
         if type(score) != int:
             raise TypeError('score() method should return an integer')
         else:

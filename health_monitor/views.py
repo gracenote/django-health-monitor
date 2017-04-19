@@ -62,8 +62,8 @@ class HealthView(View):
         # calculate health score: red, orange, yellow, green
         try:
             model = HealthTest._get_model(test)
-            result = model(uid=uid, **kwargs)
-        except LookupError as e:
+            result = model.create(uid=uid, **kwargs)
+        except Exception as e:
             response_data['message'] = str(e)
             status_code = 400
             return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)

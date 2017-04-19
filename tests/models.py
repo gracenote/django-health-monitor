@@ -1,4 +1,4 @@
-# from django.db import models
+from django.db import models
 
 from health_monitor.models import Health, HealthTest
 
@@ -8,11 +8,14 @@ class BodyHealth(Health):
 
 
 class Heart(HealthTest):
+    heartrate = models.IntegerField()
+
     health_model = BodyHealth
     groups = ['doctor']
     test = 'heart'
 
-    def score(self, heartrate):
+    @staticmethod
+    def score(heartrate):
         heartrate = int(heartrate)
         if heartrate > 120:
             return 4
@@ -25,11 +28,14 @@ class Heart(HealthTest):
 
 
 class Sleep(HealthTest):
+    hours = models.IntegerField()
+
     health_model = BodyHealth
     groups = ['doctor']
     test = 'sleep'
 
-    def score(self, hours):
+    @staticmethod
+    def score(hours):
         hours = int(hours)
         if hours < 4:
             return 4
