@@ -22,7 +22,7 @@ The base `Health` model serves the purpose of storing an asset's latest "health 
 
 To explain this concept, let's say that an overall `BodyHealth` depends on a "heart" test result and a "sleep" test result, each of which have four normalized test scores - 1 for good, 2 for mildly bad, 3 for moderately bad, and 4 for extremely bad. For a particular person, a "heart" score of 3 and a "sleep" score of 2 would result in a state of `{'heart': 3, 'sleep': 2}` and a severity of 3. If later the "sleep" score changed to 1, the state will change to `{'heart': 3, 'sleep': 1}` and remain a severity of 3 since severity is calculated as the max score within state. If later the "heart" score changed to 1, the resultant state would be `{'heart': 1, 'sleep': 1}` and the severity would drop to 1 indicating an overall "good" health.
 
-Defining a child class of `Health` is as simple as the following where `uid` is set as a model attribute with a unique constraint. An `IntegerField` is recommended.
+Defining a derived `Health` model called `BodyHealth` is as simple as the following.
 
     models.py::
 
@@ -30,7 +30,7 @@ Defining a child class of `Health` is as simple as the following where `uid` is 
 
 
         class BodyHealth(Health):
-            uid = models.IntegerField(primary_key=True, db_index=True)
+            pass
 
 
 `HealthTest`
@@ -44,9 +44,9 @@ The base `HealthTest` model serves the purpose of storing historical test result
 
 
         class HeartHealthTest(HealthTest):
-            uid = models.IntegerField(db_index=True)
-            test = 'heart'
+            health_model = BodyHealth
             groups = ['doctor']
+            test = 'heart'
 
             def score(self, heartrate):
                 heartrate = int(heartrate)
@@ -61,9 +61,9 @@ The base `HealthTest` model serves the purpose of storing historical test result
                     return 1
 
         class SleepHealthTest(HealthTest):
-            uid = models.IntegerField(db_index=True)
-            test = 'sleep'
+            health_model = BodyHealth
             groups = ['doctor']
+            test = 'sleep'
 
             def score(self, hours):
                 if sleep < 4:
@@ -75,8 +75,11 @@ The base `HealthTest` model serves the purpose of storing historical test result
                 else:
                     return 1
 
-In these examples of `HealthHealthTest` and `SleepHealthTest`, there are two attributes that are also required - `test` and `groups`. `test` is a string that will be used to reference the test in the API (following section) and `groups` is a list of groups that each test will be associated with. Each test must belong to at least one group, and each group serves the purposes of bunching related tests. Note that the `uid` should be set to be the same type as above in `BodyHealth`, however, it should **not** be set as a primary key.
+When defining derived `HealthTest` models such as `HeartHealthTest` and `SleepHealthTest`, there are three attributes that are required - `health_model`, `groups`, and `test`.
 
+- `health_model` is the model that holds the states (defined above)
+- `groups` is a list of user-defined groups that each test will be associated with and there must be at minimum one group in order for test results to update the "health state"
+- `test` is a string that will be used to reference the test in the API (following section)
 
 ****************
 2. Configure API

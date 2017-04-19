@@ -8,9 +8,9 @@ class BodyHealth(Health):
 
 
 class Heart(HealthTest):
-    test = 'heart'
-    groups = ['doctor']
     health_model = BodyHealth
+    groups = ['doctor']
+    test = 'heart'
 
     def score(self, heartrate):
         heartrate = int(heartrate)
@@ -25,9 +25,9 @@ class Heart(HealthTest):
 
 
 class Sleep(HealthTest):
-    test = 'sleep'
-    groups = ['doctor']
     health_model = BodyHealth
+    groups = ['doctor']
+    test = 'sleep'
 
     def score(self, hours):
         hours = int(hours)
