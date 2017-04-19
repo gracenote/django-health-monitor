@@ -62,7 +62,7 @@ class Health(models.Model):
 
 
 class HealthTest(models.Model):
-    uid = models.IntegerField(primary_key=True, db_index=True)
+    uid = models.IntegerField(db_index=True)
 
     test = None
     groups = []
