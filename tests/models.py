@@ -7,7 +7,7 @@ class BodyHealth(Health):
     pass
 
 
-class Heart(HealthTest):
+class HeartHealthTest(HealthTest):
     heartrate = models.IntegerField()
 
     health_model = BodyHealth
@@ -27,7 +27,7 @@ class Heart(HealthTest):
             return 1
 
 
-class Sleep(HealthTest):
+class SleepHealthTest(HealthTest):
     hours = models.FloatField()
 
     health_model = BodyHealth
