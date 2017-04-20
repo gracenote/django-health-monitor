@@ -14,8 +14,10 @@
    limitations under the License.
 """
 
-from django.db import models
 from jsonfield import JSONField
+
+from django.db import models
+from django.utils import timezone
 
 from . import utils
 
@@ -63,6 +65,7 @@ class Health(models.Model):
 
 class HealthTest(models.Model):
     uid = models.IntegerField(db_index=True)
+    time = models.DateTimeField()
 
     test = None
     groups = []
@@ -70,7 +73,7 @@ class HealthTest(models.Model):
 
     @classmethod
     def create(cls, uid, **kwargs):
-        health_test = cls(uid=uid, **kwargs)
+        health_test = cls(uid=uid, time=timezone.now(), **kwargs)
         health_test.save()
 
         h, _ = cls.health_model.objects.get_or_create(uid=uid)

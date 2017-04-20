@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import timezone
 
 from ..models import BodyHealth, HeartHealthTest, SleepHealthTest
 
@@ -17,3 +18,10 @@ class HealthTestUnitTestCase(TestCase):
         self.assertEqual(2, len(SleepHealthTest.objects.all()))
         body_health = BodyHealth.objects.get(uid=1)
         self.assertEqual(1, body_health.state['doctor']['sleep']['score'])
+
+    def test_datetime(self):
+        now = timezone.now()
+        SleepHealthTest.create(uid=1, hours=8)
+        result = SleepHealthTest.objects.last()
+
+        self.assertGreater(result.time, now)
