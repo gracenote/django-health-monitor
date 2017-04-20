@@ -84,6 +84,14 @@ class HealthTest(models.Model):
         return health_test
 
     @classmethod
+    def get_score(cls, **kwargs):
+        score = cls.score(**kwargs)
+        if type(score) != int:
+            raise TypeError('score method should return an integer')
+        else:
+            return score
+
+    @classmethod
     def get_history(cls, uids, start_time=timezone.datetime.min, end_time=timezone.datetime.max):
         return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
 
@@ -104,14 +112,6 @@ class HealthTest(models.Model):
             if test == t.test:
                 return t
         raise TypeError('test {} does not exist'.format(test))
-
-    @classmethod
-    def get_score(cls, **kwargs):
-        score = cls.score(**kwargs)
-        if type(score) != int:
-            raise TypeError('score() method should return an integer')
-        else:
-            return score
 
     class Meta(object):
         abstract = True
