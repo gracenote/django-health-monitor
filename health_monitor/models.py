@@ -14,6 +14,7 @@
    limitations under the License.
 """
 from jsonfield import JSONField
+import pytz
 
 from django.db import models
 from django.utils import timezone
@@ -92,7 +93,7 @@ class HealthTest(models.Model):
             return score
 
     @classmethod
-    def get_history(cls, uids, start_time=timezone.datetime.min, end_time=timezone.datetime.max):
+    def get_history(cls, uids, start_time=timezone.datetime.min.replace(tzinfo=pytz.UTC), end_time=timezone.datetime.max.replace(tzinfo=pytz.UTC)):
         return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
 
     @staticmethod
