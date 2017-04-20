@@ -26,7 +26,7 @@ class HealthTestUnitTestCase(TestCase):
 
         self.assertGreater(result.time, now)
 
-    def test_history(self):
+    def test_get_history(self):
         SleepHealthTest.create(uid=1, hours=8)
         SleepHealthTest.create(uid=1, hours=8)
         SleepHealthTest.create(uid=2, hours=8)
@@ -42,17 +42,17 @@ class HealthTestUnitTestCase(TestCase):
         SleepHealthTest.create(uid=2, hours=8)
         SleepHealthTest.create(uid=3, hours=8)
 
-        results = SleepHealthTest.history(uids=[1, 2, 3])
+        results = SleepHealthTest.get_history(uids=[1, 2, 3])
         self.assertEqual(12, len(results))
-        results = SleepHealthTest.history(uids=[1])
+        results = SleepHealthTest.get_history(uids=[1])
         self.assertEqual(4, len(results))
-        results = SleepHealthTest.history(uids=[1, 2, 3], end_time=time_1)
+        results = SleepHealthTest.get_history(uids=[1, 2, 3], end_time=time_1)
         self.assertEqual(6, len(results))
-        results = SleepHealthTest.history(uids=[1, 2, 3], start_time=time_1, end_time=time_2)
+        results = SleepHealthTest.get_history(uids=[1, 2, 3], start_time=time_1, end_time=time_2)
         self.assertEqual(3, len(results))
-        results = SleepHealthTest.history(uids=[1, 2, 3], start_time=time_2)
+        results = SleepHealthTest.get_history(uids=[1, 2, 3], start_time=time_2)
         self.assertEqual(3, len(results))
-        results = SleepHealthTest.history(uids=[2], start_time=time_1)
+        results = SleepHealthTest.get_history(uids=[2], start_time=time_1)
         self.assertEqual(2, len(results))
-        results = SleepHealthTest.history(uids=[2], start_time=time_2)
+        results = SleepHealthTest.get_history(uids=[2], start_time=time_2)
         self.assertEqual(1, len(results))

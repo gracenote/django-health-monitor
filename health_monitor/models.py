@@ -84,7 +84,7 @@ class HealthTest(models.Model):
         return health_test
 
     @classmethod
-    def history(cls, uids, start_time=timezone.datetime.min, end_time=timezone.datetime.max):
+    def get_history(cls, uids, start_time=timezone.datetime.min, end_time=timezone.datetime.max):
         return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
 
     @staticmethod
