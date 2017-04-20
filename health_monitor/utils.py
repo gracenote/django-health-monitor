@@ -1,3 +1,5 @@
+import datetime
+
 from django.utils import timezone
 
 
@@ -13,4 +15,10 @@ def update_score_dict(d, s):
     if s != d['score']:
         d['score'] = s
         d['updated'] = timezone.now()
+    return d
+
+
+def iso_format_datetime(d):
+    if isinstance(d, datetime):
+        return d.isoformat()
     return d

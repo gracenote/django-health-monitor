@@ -67,7 +67,7 @@ The base `HealthTest` model serves the purpose of storing historical test result
             test = 'sleep'
 
             @staticmethod
-            def score(self, hours):
+            def score(hours):
                 hours = float(hours)
 
                 if sleep < 4:
@@ -103,12 +103,27 @@ The following steps create an API with the following endpoints and actions:
 - /health/<uid>/
     - GET the health states and health severities of a particular uid
     - DELETE the health instance for a particular uid
-- /health/<uid>/<test>/
-    - POST test results for a particular uid
+- /health/<uid>/<group>/
+    - GET the health states and health severities of a particular uid and group
+    - DELETE the health instance for a particular uid and group
+- /health/<uid>/<group>/<test>/
+    - GET the health states and health severities of a particular uid and group and test
+    - DELETE the health instance for a particular uid and group and test
+- /health/
+    - GET a list of all health tests
+- /health_tests/<test>/
+    - GET test results for a particular test with the query string parameters
+        - `uids` - a required comma separated list of uids (ex. /health/heart/?uids=1,2,3)
+        - `start_time` - an optional start time in the format FORMAT (ex. /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx)
+        - `end_time` - an optional start time in the format FORMAT
+- /health_test/<test>/<uid>/
+    - GET test results for a particular test and uid
+    - POST test results for a particular test and uid
 
 Where:
 
-- <uid> is a unique identifier for the asset.
+- <uid> is a unique identifier of an asset.
+- <group> is the name of a group of tests.
 - <test> is the name of a health test.
 
 Map URLs to Views

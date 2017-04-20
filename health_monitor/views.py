@@ -27,7 +27,7 @@ from .models import HealthTest
 
 class HealthView(View):
     def get(self, request, uid=None, group=None, test=None):
-        """"""
+        """Get health by uid."""
         if not uid:
             response_data = {
                 'uids': [x.uid for x in self.health_model.objects.all()],
@@ -50,8 +50,30 @@ class HealthView(View):
                 status_code = 400
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
-    def post(self, request, uid=None, group=None, test=None):
-        """Generic view to update health for a single UID."""
+    def delete(self, request, uid=None, group=None, test=None):
+        """Delete health by uid."""
+        if uid and not test:
+            try:
+                self.health_model.objects.get(uid=uid).delete()
+                response_data = {
+                    'message': '{} deleted'.format(uid)
+                }
+                status_code = 200
+            except Exception as e:
+                response_data = {
+                    'message': str(e)
+                }
+                status_code = 400
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+
+
+class HealthTestView(View):
+    def get(self, request, uid=None, test=None):
+        """Get historical test results by uid and group."""
+        pass
+
+    def post(self, request, uid=None, test=None):
+        """Post health test by uid and test."""
         kwargs = {}
         response_data = {}
 
@@ -73,43 +95,3 @@ class HealthView(View):
         response_data['message'] = '{} score changed to {} for uid {}'.format(test, score, uid)
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
-
-    def delete(self, request, uid=None, group=None, test=None):
-        if uid and not test:
-            try:
-                self.health_model.objects.get(uid=uid).delete()
-                response_data = {
-                    'message': '{} deleted'.format(uid)
-                }
-                status_code = 200
-            except Exception as e:
-                response_data = {
-                    'message': str(e)
-                }
-                status_code = 400
-        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
-
-    # def history(self, request, uid=None, group=None):
-    #     """Generic view to return historical test results.
-    #
-    #     Time should be passed in url in the format '%Y-%m-%d %H:%M:%S'
-    #     Default start_time is two hours in the past.
-    #     Default end_time is now.
-    #     """
-    #     start_time = request.GET['start_time'] if 'start_time' in request.GET.keys() else datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    #     end_time = request.GET['end_time'] if 'end_time' in request.GET.keys() else datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    #
-    #     response_data = {}
-    #     dispatcher = get_dispatcher()
-    #     health_keys = health_helper.get_health_keys(group)
-    #
-    #     for test in health_keys:
-    #         model = get_model('monitoring', dispatcher[test]['model'])
-    #         response_data[test] = {}
-    #         if 'time' in dispatcher[test].keys():
-    #             timerange = dispatcher[test]['time'] + '__range'
-    #             model.objects.filter(**{timerange: (start_time, end_time)})
-    #         elif 'start_time' in dispatcher[test].keys() and 'end_time' in dispatcher[test].keys():
-    #             start_timerange = dispatcher[test]['start_time'] + '__gte'
-    #             end_timerange = dispatcher[test]['end_time'] + '__lte'
-    #             model.objects.filter(**{start_timerange: start_time}).filter(**{end_timerange: end_time})
