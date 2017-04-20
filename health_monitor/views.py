@@ -70,7 +70,7 @@ class HealthView(View):
 
         score = result.score(**kwargs)
         response_data['score'] = score
-        response_data['message'] = '{} changed to {} for uid {}'.format(test, score, uid)
+        response_data['message'] = '{} score changed to {} for uid {}'.format(test, score, uid)
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
