@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-
 from jsonfield import JSONField
 
 from django.db import models
@@ -71,6 +70,9 @@ class HealthTest(models.Model):
     groups = []
     health_model = Health
 
+    def __unicode__(self):      # For Python 2, use __str__ on Python 3
+        return unicode(self.uid)
+
     @classmethod
     def create(cls, uid, **kwargs):
         health_test = cls(uid=uid, time=timezone.now(), **kwargs)
@@ -80,6 +82,10 @@ class HealthTest(models.Model):
         h.update_score(test=cls.test, score=cls.get_score(**kwargs))
 
         return health_test
+
+    @classmethod
+    def history(cls, uids, start_time=timezone.datetime.min, end_time=timezone.datetime.max):
+        return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
 
     @staticmethod
     def _get_tests(group):
