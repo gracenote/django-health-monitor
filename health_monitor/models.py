@@ -81,8 +81,8 @@ class HealthTest(models.Model):
 
         return health_test
 
-    @classmethod
-    def _get_tests(cls, group):
+    @staticmethod
+    def _get_tests(group):
         return [t.test for t in HealthTest.__subclasses__() if group in t.groups]
 
     @staticmethod
