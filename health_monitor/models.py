@@ -97,7 +97,9 @@ class HealthTest(models.Model):
         return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
 
     @staticmethod
-    def _get_tests(group):
+    def _get_tests(group=None):
+        if not group:
+            return [t.test for t in HealthTest.__subclasses__()]
         return [t.test for t in HealthTest.__subclasses__() if group in t.groups]
 
     @staticmethod

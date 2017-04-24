@@ -37,6 +37,12 @@ class HealthIntegrationTestCase(TestCase):
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 400)
 
+    def test_get_health_test(self):
+        # get health test list
+        response = self.client.get('/health_test/')
+        self.assertTrue('sleep' in json.loads(response.content.decode())['tests'])
+        self.assertTrue('heart' in json.loads(response.content.decode())['tests'])
+
     def test_post_health_test(self):
         # change heart state and severity to 2
         response = self.client.post('/health_test/heart/123456789/', {'heartrate': 100})

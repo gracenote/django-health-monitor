@@ -70,7 +70,17 @@ class HealthView(View):
 class HealthTestView(View):
     def get(self, request, uid=None, test=None):
         """Get historical test results by uid and group."""
-        pass
+        status_code = 200
+        try:
+            if not uid and not test:
+                response_data = {'tests': HealthTest._get_tests()}
+        except Exception as e:
+                response_data = {
+                    'message': str(e)
+                }
+                status_code = 400
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     def post(self, request, uid=None, test=None):
         """Post health test by uid and test."""
