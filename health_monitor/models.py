@@ -102,6 +102,8 @@ class HealthTest(models.Model):
         score = cls.score(**kwargs)
         if type(score) != int:
             raise TypeError('score method should return an integer')
+        elif score < 0:
+            raise ValueError('score method should return a positive integer')
         else:
             return score
 
