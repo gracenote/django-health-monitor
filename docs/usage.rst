@@ -132,24 +132,49 @@ And query string arguments:
 - <end_time> - a datetime string in  ISO 8601 format (optional)
 - example: /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
 
+Configure `HealthView` and `HealthTestView` Models
+--------------------------------------------------
+The following class definitions should be made to configure the API view classes.
+
+    views.py::
+
+        from health_monitor.views import HealthTestView, HealthView
+
+        from .models import BodyHealth
+
+
+        class BodyHealthView(HealthView):
+            health_model = BodyHealth
+
+
+        class BodyHealthTestView(HealthTestView):
+            pass
+
+Where `health_model` is set to the `Health` model defined above.
+
 Map URLs to Views
 -----------------
+The following url definitions should be made to enable all of the endpoints and actions described above.
+
     urls.py::
 
 
         from django.conf.urls import url
 
-        from health_monitor import views
+        from . import views
 
 
         urlpatterns = [
-            url(r'^health/$', views.HealthView.as_view()),
-            url(r'^health/(?P<uid>[\w]*)/$', views.HealthView.as_view()),
-            url(r'^health/(?P<uid>[\w]*)/(?P<test>[\w]*)/$', views.HealthView.as_view()),
+            url(r'^health/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
             url(r'^health_test/$', views.BodyHealthTestView.as_view()),
             url(r'^health_test/(?P<test>[\w-]*)/$', views.BodyHealthTestView.as_view()),
             url(r'^health_test/(?P<test>[\w-]*)/(?P<uid>[\d]*)/$', views.BodyHealthTestView.as_view()),
         ]
+
+In this example, `BodyHealthView` and `BodyHealthTestView` are the names of the View models that we defined in the previous section.
 
 
 *********************************
