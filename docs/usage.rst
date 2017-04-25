@@ -101,21 +101,23 @@ The following steps create an API with the following endpoints and actions:
 - /health/
     - GET a list of all health uids
 - /health/<uid>/
-    - GET the health states and health severities of a particular uid
-    - DELETE the health instance for a particular uid
+    - GET the health of a particular uid
+    - DELETE the health for a particular uid
 - /health/<uid>/<group>/
-    - GET the health states and health severities of a particular uid and group
-    - DELETE the health instance for a particular uid and group
+    - GET the health of a particular uid and group
+    - DELETE health of a particular uid and group
 - /health/<uid>/<group>/<test>/
-    - GET the health states and health severities of a particular uid and group and test
-    - DELETE the health instance for a particular uid and group and test
+    - GET the health of a particular uid and group and test
+    - DELETE the health of a particular uid and group and test
 - /health_test/
     - GET a list of all health tests
 - /health_tests/<test>/?uids=<uids>&start_time=<start_time>&end_time=<end_time>
-    - GET test results for a particular test with the query string parameters
+    - GET test results for a particular test with filters
 - /health_test/<test>/<uid>/?start_time=<start_time>&end_time=<end_time>
-    - GET test results for a particular test and uid
+    - GET test results for a particular test and uid with filters
+- /health_test/<test>/<uid>/
     - POST test results for a particular test and uid
+
 
 Where:
 
@@ -126,8 +128,8 @@ Where:
 And query string arguments:
 
 - <uids> - a comma separated list of uids
-- <start_time> - a datetime string in ISO 8601 format
-- <end_time> - a datetime string in  ISO 8601 format
+- <start_time> - a datetime string in ISO 8601 format (optional)
+- <end_time> - a datetime string in  ISO 8601 format (optional)
 - example: /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
 
 Map URLs to Views
@@ -144,7 +146,9 @@ Map URLs to Views
             url(r'^health/$', views.HealthView.as_view()),
             url(r'^health/(?P<uid>[\w]*)/$', views.HealthView.as_view()),
             url(r'^health/(?P<uid>[\w]*)/(?P<test>[\w]*)/$', views.HealthView.as_view()),
-            # url(r'^health/(?P<uid>[\d]*)/history/(?P<group>[\w-]*)/$', views.history, name='history'),
+            url(r'^health_test/$', views.BodyHealthTestView.as_view()),
+            url(r'^health_test/(?P<test>[\w-]*)/$', views.BodyHealthTestView.as_view()),
+            url(r'^health_test/(?P<test>[\w-]*)/(?P<uid>[\d]*)/$', views.BodyHealthTestView.as_view()),
         ]
 
 
