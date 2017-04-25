@@ -41,6 +41,7 @@ matrix:
 branches:
  only:
   - master
+  - dev
 script:
   # - flake8 --exclude=migrations health_monitor
   - coverage run manage.py test
