@@ -1,8 +1,10 @@
 import json
 
 from django.test import TestCase
+from django.utils import timezone
 
-from ..models import BodyHealth
+from ..models import BodyHealth, SleepHealthTest
+from health_monitor import utils
 
 
 class HealthIntegrationTestCase(TestCase):
@@ -83,3 +85,41 @@ class HealthIntegrationTestCase(TestCase):
     def test_post_health_test_wrong_param(self):
         response = self.client.post('/health_test/heart/123456789/', {'breath': 1})
         self.assertEqual(response.status_code, 400)
+
+    def test_get_health_test_history(self):
+        SleepHealthTest.create(uid=1, hours=8)
+        SleepHealthTest.create(uid=1, hours=8)
+        SleepHealthTest.create(uid=2, hours=8)
+        SleepHealthTest.create(uid=2, hours=8)
+        SleepHealthTest.create(uid=3, hours=8)
+        SleepHealthTest.create(uid=3, hours=8)
+        time_1, _ = utils.datetime_to_iso(timezone.now()).split('+')
+        SleepHealthTest.create(uid=1, hours=8)
+        SleepHealthTest.create(uid=2, hours=8)
+        SleepHealthTest.create(uid=3, hours=8)
+        time_2, _ = utils.datetime_to_iso(timezone.now()).split('+')
+        SleepHealthTest.create(uid=1, hours=8)
+        SleepHealthTest.create(uid=2, hours=8)
+        SleepHealthTest.create(uid=3, hours=8)
+
+        response = self.client.get('/health_test/sleep/?uids=1,2,3')
+        content = json.loads(response.content)
+        self.assertEqual(12, len(content))
+        response = self.client.get('/health_test/sleep/1/')
+        content = json.loads(response.content)
+        self.assertEqual(4, len(content))
+        response = self.client.get('/health_test/sleep/?uids=1,2,3&end_time={}'.format(time_1))
+        content = json.loads(response.content)
+        self.assertEqual(6, len(content))
+        response = self.client.get('/health_test/sleep/?uids=1,2,3&start_time={}&end_time={}'.format(time_1, time_2))
+        content = json.loads(response.content)
+        self.assertEqual(3, len(content))
+        response = self.client.get('/health_test/sleep/?uids=1,2,3&start_time={}'.format(time_2))
+        content = json.loads(response.content)
+        self.assertEqual(3, len(content))
+        response = self.client.get('/health_test/sleep/2/?start_time={}'.format(time_1))
+        content = json.loads(response.content)
+        self.assertEqual(2, len(content))
+        response = self.client.get('/health_test/sleep/2/?start_time={}'.format(time_2))
+        content = json.loads(response.content)
+        self.assertEqual(1, len(content))

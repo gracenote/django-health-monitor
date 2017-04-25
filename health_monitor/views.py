@@ -22,6 +22,7 @@ try:
 except ImportError:
     from django.views.generic import View
 
+from . import utils
 from .models import HealthTest
 
 
@@ -69,11 +70,30 @@ class HealthView(View):
 
 class HealthTestView(View):
     def get(self, request, uid=None, test=None):
-        """Get historical test results by uid and group."""
+        """Get historical test results by test, uid."""
         status_code = 200
         try:
             if not uid and not test:
                 response_data = {'tests': HealthTest._get_tests()}
+            else:
+                model = HealthTest._get_model(test)
+                kwargs = {}
+                if uid:
+                    kwargs['uids'] = [uid]
+                elif 'uids' in request.GET:
+                    kwargs['uids'] = request.GET['uids'].split(',')
+                if 'start_time' in request.GET:
+                    kwargs['start_time'] = utils.iso_to_datetime(request.GET['start_time'])
+                if 'end_time' in request.GET:
+                    kwargs['end_time'] = utils.iso_to_datetime(request.GET['end_time'])
+
+                response_data = []
+                fields = [x.name for x in model._meta.fields if x.name != 'id']
+                for result in model.get_history(**kwargs):
+                    entry = {}
+                    for field in fields:
+                        entry[field] = utils.datetime_to_iso(getattr(result, field))
+                    response_data.append(entry)
         except Exception as e:
                 response_data = {
                     'message': str(e)
@@ -83,7 +103,7 @@ class HealthTestView(View):
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     def post(self, request, uid=None, test=None):
-        """Post health test by uid and test."""
+        """Post health test by test and uid."""
         kwargs = {}
         response_data = {}
 

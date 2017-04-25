@@ -109,14 +109,11 @@ The following steps create an API with the following endpoints and actions:
 - /health/<uid>/<group>/<test>/
     - GET the health states and health severities of a particular uid and group and test
     - DELETE the health instance for a particular uid and group and test
-- /health/
+- /health_test/
     - GET a list of all health tests
-- /health_tests/<test>/
+- /health_tests/<test>/?uids=<uids>&start_time=<start_time>&end_time=<end_time>
     - GET test results for a particular test with the query string parameters
-        - `uids` - a required comma separated list of uids (ex. /health/heart/?uids=1,2,3)
-        - `start_time` - an optional start time in the format FORMAT (ex. /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx)
-        - `end_time` - an optional start time in the format FORMAT
-- /health_test/<test>/<uid>/
+- /health_test/<test>/<uid>/?start_time=<start_time>&end_time=<end_time>
     - GET test results for a particular test and uid
     - POST test results for a particular test and uid
 
@@ -125,6 +122,13 @@ Where:
 - <uid> is a unique identifier of an asset.
 - <group> is the name of a group of tests.
 - <test> is the name of a health test.
+
+And query string arguments:
+
+- <uids> - a comma separated list of uids
+- <start_time> - a datetime string in ISO 8601 format
+- <end_time> - a datetime string in  ISO 8601 format
+- example: /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
 
 Map URLs to Views
 -----------------

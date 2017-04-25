@@ -1,4 +1,6 @@
 import datetime
+import dateutil.parser
+import pytz
 
 from django.utils import timezone
 
@@ -18,7 +20,13 @@ def update_score_dict(d, s):
     return d
 
 
-def iso_format_datetime(d):
-    if isinstance(d, datetime):
+def datetime_to_iso(d):
+    """Converts a datetime object to ISO format string."""
+    if isinstance(d, datetime.datetime):
         return d.isoformat()
     return d
+
+
+def iso_to_datetime(d):
+    """Converts an ISO format string to a datetime object with UTC timezone."""
+    return dateutil.parser.parse(d).replace(tzinfo=pytz.UTC)
