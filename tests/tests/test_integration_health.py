@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.utils import timezone
 
 from ..models import BodyHealth, SleepHealthTest
-from ..utils import get_content_dict
 from health_monitor import utils
 
 
@@ -15,7 +14,7 @@ class HealthIntegrationTestCase(TestCase):
         self.client.post('/health_test/heart/2/', {'heartrate': 60})
         self.client.post('/health_test/heart/3/', {'heartrate': 60})
         response = self.client.get('/health/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue(1 in content['uids'])
         self.assertTrue(2 in content['uids'])
         self.assertTrue(3 in content['uids'])
@@ -58,22 +57,22 @@ class HealthIntegrationTestCase(TestCase):
         self.client.post('/health_test/heart/1/', {'heartrate': 60})
         self.client.post('/health_test/sleep/1/', {'hours': 8.0})
         response = self.client.get('/health/1/doctor/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('doctor' in content['state'].keys())
         self.assertTrue('coach' not in content['state'].keys())
         response = self.client.get('/health/1/coach/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('coach' in content['state'].keys())
         self.assertTrue('doctor' not in content['state'].keys())
 
         """DELETE the health of a particular uid and group - /health/<uid>/<group>/"""
         self.client.delete('/health/1/coach/')
         response = self.client.get('/health/1/doctor/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('doctor' in content['state'].keys())
         self.assertTrue('coach' not in content['state'].keys())
         response = self.client.get('/health/1/coach/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('doctor' not in content['state'].keys())
         self.assertTrue('coach' not in content['state'].keys())
 
@@ -82,22 +81,22 @@ class HealthIntegrationTestCase(TestCase):
         self.client.post('/health_test/heart/1/', {'heartrate': 60})
         self.client.post('/health_test/sleep/1/', {'hours': 8.0})
         response = self.client.get('/health/1/doctor/sleep/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('sleep' in content['state']['doctor'].keys())
         self.assertTrue('heart' not in content['state']['doctor'].keys())
         response = self.client.get('/health/1/coach/sleep/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('sleep' in content['state']['coach'].keys())
         self.assertTrue('heart' not in content['state']['coach'].keys())
 
         """DELETE the health of a particular uid and group and test - /health/<uid>/<group>/<test>/"""
         self.client.delete('/health/1/doctor/sleep/')
         response = self.client.get('/health/1/doctor/sleep/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('sleep' not in content['state']['doctor'].keys())
         self.assertTrue('heart' not in content['state']['doctor'].keys())
         response = self.client.get('/health/1/coach/sleep/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertTrue('sleep' in content['state']['coach'].keys())
         self.assertTrue('heart' not in content['state']['coach'].keys())
 
@@ -128,25 +127,25 @@ class HealthIntegrationTestCase(TestCase):
         SleepHealthTest.create(uid=3, hours=8)
 
         response = self.client.get('/health_test/sleep/?uids=1,2,3')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(12, len(content))
         response = self.client.get('/health_test/sleep/1/')
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(4, len(content))
         response = self.client.get('/health_test/sleep/?uids=1,2,3&end_time={}'.format(time_1))
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(6, len(content))
         response = self.client.get('/health_test/sleep/?uids=1,2,3&start_time={}&end_time={}'.format(time_1, time_2))
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(3, len(content))
         response = self.client.get('/health_test/sleep/?uids=1,2,3&start_time={}'.format(time_2))
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(3, len(content))
         response = self.client.get('/health_test/sleep/2/?start_time={}'.format(time_1))
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(2, len(content))
         response = self.client.get('/health_test/sleep/2/?start_time={}'.format(time_2))
-        content = get_content_dict(response.content)
+        content = json.loads(response.content.decode())
         self.assertEqual(1, len(content))
 
     def test_post_health_test(self):
