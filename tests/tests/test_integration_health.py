@@ -65,16 +65,16 @@ class HealthIntegrationTestCase(TestCase):
         self.assertTrue('coach' in content['state'].keys())
         self.assertTrue('doctor' not in content['state'].keys())
 
-        # """DELETE the health of a particular uid and group - /health/<uid>/<group>/"""
-        # self.client.delete('/health/1/coach/')
-        # response = self.client.get('/health/1/doctor/')
-        # content = json.loads(response.content)
-        # self.assertTrue('doctor' in content['state'].keys())
-        # self.assertTrue('coach' not in content['state'].keys())
-        # response = self.client.get('/health/1/coach/')
-        # content = json.loads(response.content)
-        # self.assertTrue('doctor' not in content['state'].keys())
-        # self.assertTrue('coach' not in content['state'].keys())
+        """DELETE the health of a particular uid and group - /health/<uid>/<group>/"""
+        self.client.delete('/health/1/coach/')
+        response = self.client.get('/health/1/doctor/')
+        content = json.loads(response.content)
+        self.assertTrue('doctor' in content['state'].keys())
+        self.assertTrue('coach' not in content['state'].keys())
+        response = self.client.get('/health/1/coach/')
+        content = json.loads(response.content)
+        self.assertTrue('doctor' not in content['state'].keys())
+        self.assertTrue('coach' not in content['state'].keys())
 
     def test_get_health_uid_group_test(self):
         """GET the health of a particular uid and group and test - /health/<uid>/<group>/<test>/"""

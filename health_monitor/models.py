@@ -59,6 +59,12 @@ class Health(models.Model):
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
+    def delete_group(self, group):
+        """Delete group from state and severity."""
+        del(self.state[group])
+        del(self.severity[group])
+        self.save()
+
     class Meta(object):
         abstract = True
 

@@ -29,11 +29,11 @@ from .models import HealthTest
 class HealthView(View):
     def get(self, request, uid=None, group=None, test=None):
         """Get health by uid."""
+        status_code = 200
         if not test and not group and not uid:
             response_data = {
                 'uids': [x.uid for x in self.health_model.objects.all()],
             }
-            status_code = 200
         else:
             try:
                 health = self.health_model.objects.get(uid=uid)
@@ -51,7 +51,6 @@ class HealthView(View):
                     'state': state,
                     'severity': severity,
                 }
-                status_code = 200
             except Exception as e:
                 response_data = {
                     'uid': uid,
@@ -62,18 +61,23 @@ class HealthView(View):
 
     def delete(self, request, uid=None, group=None, test=None):
         """Delete health by uid."""
-        if uid and not test:
-            try:
+        status_code = 200
+        try:
+            if not test and not group:
                 self.health_model.objects.get(uid=uid).delete()
                 response_data = {
-                    'message': '{} deleted'.format(uid)
+                    'message': '{} health deleted'.format(uid)
                 }
-                status_code = 200
-            except Exception as e:
+            elif not test:
+                self.health_model.objects.get(uid=uid).delete_group(group)
                 response_data = {
-                    'message': str(e)
+                    'message': '{} group deleted from {} health'.format(group, uid)
                 }
-                status_code = 400
+        except Exception as e:
+            response_data = {
+                'message': str(e)
+            }
+            status_code = 400
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
 
