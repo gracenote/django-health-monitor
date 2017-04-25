@@ -93,7 +93,7 @@ class HealthIntegrationTestCase(TestCase):
         SleepHealthTest.create(uid=2, hours=8)
         SleepHealthTest.create(uid=3, hours=8)
         SleepHealthTest.create(uid=3, hours=8)
-        time_1, _ = utils.datetime_to_iso(timezone.now()).split('+')
+        time_1 = utils.datetime_to_iso(timezone.now())
         SleepHealthTest.create(uid=1, hours=8)
         SleepHealthTest.create(uid=2, hours=8)
         SleepHealthTest.create(uid=3, hours=8)
@@ -121,14 +121,5 @@ class HealthIntegrationTestCase(TestCase):
         content = json.loads(response.content)
         self.assertEqual(2, len(content))
         response = self.client.get('/health_test/sleep/2/?start_time={}'.format(time_2))
-        content = json.loads(response.content)
-        self.assertEqual(1, len(content))
-
-    def test_get_health_test_history_with_offset(self):
-        SleepHealthTest.create(uid=1, hours=8)
-        time_1 = utils.datetime_to_iso(timezone.now())
-        SleepHealthTest.create(uid=1, hours=8)
-
-        response = self.client.get('/health_test/sleep/?uids=1,2,3&end_time={}'.format(time_1))
         content = json.loads(response.content)
         self.assertEqual(1, len(content))
