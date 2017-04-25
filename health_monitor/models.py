@@ -51,7 +51,7 @@ class Health(models.Model):
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
-    def delete_test_state(self, test):
+    def delete_test(self, test):
         """Delete test state"""
         for group in self.state.keys():
             if test in self.state[group].keys():
