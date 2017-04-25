@@ -61,7 +61,7 @@ class HealthIntegrationTestCase(TestCase):
         SleepHealthTest.create(uid=1, hours=8)
         SleepHealthTest.create(uid=2, hours=8)
         SleepHealthTest.create(uid=3, hours=8)
-        time_2, _ = utils.datetime_to_iso(timezone.now()).split('+')
+        time_2, _ = utils.datetime_to_iso(timezone.now()).split('+')  # missing UTC offset - will generate naive datetime warning
         SleepHealthTest.create(uid=1, hours=8)
         SleepHealthTest.create(uid=2, hours=8)
         SleepHealthTest.create(uid=3, hours=8)
