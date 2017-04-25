@@ -73,6 +73,11 @@ class HealthView(View):
                 response_data = {
                     'message': '{} group deleted from {} health'.format(group, uid)
                 }
+            else:
+                self.health_model.objects.get(uid=uid).delete_group_test(group, test)
+                response_data = {
+                    'message': '{} test deleted from {} group in {} health'.format(test, group, uid)
+                }
         except Exception as e:
             response_data = {
                 'message': str(e)

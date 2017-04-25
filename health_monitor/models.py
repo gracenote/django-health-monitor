@@ -52,7 +52,7 @@ class Health(models.Model):
         self.save()
 
     def delete_test(self, test):
-        """Delete test state"""
+        """Delete test from all groups."""
         for group in self.state.keys():
             if test in self.state[group].keys():
                 del(self.state[group][test])
@@ -63,6 +63,13 @@ class Health(models.Model):
         """Delete group from state and severity."""
         del(self.state[group])
         del(self.severity[group])
+        self.save()
+
+    def delete_group_test(self, group, test):
+        """Delete test from specified group."""
+        if test in self.state[group].keys():
+            del(self.state[group][test])
+            self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
     class Meta(object):

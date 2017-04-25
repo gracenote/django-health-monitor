@@ -89,14 +89,16 @@ class HealthIntegrationTestCase(TestCase):
         self.assertTrue('sleep' in content['state']['coach'].keys())
         self.assertTrue('heart' not in content['state']['coach'].keys())
 
-        # """DELETE the health of a particular uid and group and test - /health/<uid>/<group>/<test>/"""
-        # self.client.delete('/health/1/doctor/sleep/')
-        # response = self.client.get('/health/1/doctor/sleep/')
-        # content = json.loads(response.content)
-        # self.assertEqual(response.status_code, 400)
-        # response = self.client.get('/health/1/coach/sleep/')
-        # content = json.loads(response.content)
-        # self.assertEqual(response.status_code, 200)
+        """DELETE the health of a particular uid and group and test - /health/<uid>/<group>/<test>/"""
+        self.client.delete('/health/1/doctor/sleep/')
+        response = self.client.get('/health/1/doctor/sleep/')
+        content = json.loads(response.content)
+        self.assertTrue('sleep' not in content['state']['doctor'].keys())
+        self.assertTrue('heart' not in content['state']['doctor'].keys())
+        response = self.client.get('/health/1/coach/sleep/')
+        content = json.loads(response.content)
+        self.assertTrue('sleep' in content['state']['coach'].keys())
+        self.assertTrue('heart' not in content['state']['coach'].keys())
 
     def test_get_health_test(self):
         """GET a list of all health tests - /health_test/"""
