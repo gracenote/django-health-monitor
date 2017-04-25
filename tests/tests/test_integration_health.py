@@ -9,6 +9,18 @@ from health_monitor import utils
 
 class HealthIntegrationTestCase(TestCase):
     def test_get_health(self):
+        """GET a list of all health uids - /health/"""
+        self.client.post('/health_test/heart/1/', {'heartrate': 60})
+        self.client.post('/health_test/heart/2/', {'heartrate': 60})
+        self.client.post('/health_test/heart/3/', {'heartrate': 60})
+        response = self.client.get('/health/')
+        content = json.loads(response.content)
+        self.assertTrue(1 in content['uids'])
+        self.assertTrue(2 in content['uids'])
+        self.assertTrue(3 in content['uids'])
+
+    def test_get_health_uid(self):
+        """GET the health of a particular uid - /health/<uid>/"""
         # check health does not exist
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 400)
