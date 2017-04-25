@@ -29,7 +29,7 @@ from .models import HealthTest
 class HealthView(View):
     def get(self, request, uid=None, group=None, test=None):
         """Get health by uid."""
-        if not uid:
+        if not test and not group and not uid:
             response_data = {
                 'uids': [x.uid for x in self.health_model.objects.all()],
             }
@@ -37,10 +37,19 @@ class HealthView(View):
         else:
             try:
                 health = self.health_model.objects.get(uid=uid)
+                if test and group:
+                    state = {k: {x: y for x, y in v.items() if x == test} for k, v in health.state.items() if k == group}
+                    severity = {k: v for k, v in health.severity.items() if k == group}
+                elif group:
+                    state = {k: v for k, v in health.state.items() if k == group}
+                    severity = {k: v for k, v in health.severity.items() if k == group}
+                else:
+                    state = health.state
+                    severity = health.severity
                 response_data = {
                     'uid': health.uid,
-                    'state': health.state,
-                    'severity': health.severity,
+                    'state': state,
+                    'severity': severity,
                 }
                 status_code = 200
             except Exception as e:

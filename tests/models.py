@@ -31,7 +31,7 @@ class SleepHealthTest(HealthTest):
     hours = models.FloatField()
 
     health_model = BodyHealth
-    groups = ['doctor']
+    groups = ['doctor', 'coach']
     test = 'sleep'
 
     @staticmethod

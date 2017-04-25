@@ -52,6 +52,52 @@ class HealthIntegrationTestCase(TestCase):
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 400)
 
+    def test_get_and_delete_health_uid_group(self):
+        """GET the health of a particular uid and group - /health/<uid>/<group>/"""
+        self.client.post('/health_test/heart/1/', {'heartrate': 60})
+        self.client.post('/health_test/sleep/1/', {'hours': 8.0})
+        response = self.client.get('/health/1/doctor/')
+        content = json.loads(response.content)
+        self.assertTrue('doctor' in content['state'].keys())
+        self.assertTrue('coach' not in content['state'].keys())
+        response = self.client.get('/health/1/coach/')
+        content = json.loads(response.content)
+        self.assertTrue('coach' in content['state'].keys())
+        self.assertTrue('doctor' not in content['state'].keys())
+
+        # """DELETE the health of a particular uid and group - /health/<uid>/<group>/"""
+        # self.client.delete('/health/1/coach/')
+        # response = self.client.get('/health/1/doctor/')
+        # content = json.loads(response.content)
+        # self.assertTrue('doctor' in content['state'].keys())
+        # self.assertTrue('coach' not in content['state'].keys())
+        # response = self.client.get('/health/1/coach/')
+        # content = json.loads(response.content)
+        # self.assertTrue('doctor' not in content['state'].keys())
+        # self.assertTrue('coach' not in content['state'].keys())
+
+    def test_get_health_uid_group_test(self):
+        """GET the health of a particular uid and group and test - /health/<uid>/<group>/<test>/"""
+        self.client.post('/health_test/heart/1/', {'heartrate': 60})
+        self.client.post('/health_test/sleep/1/', {'hours': 8.0})
+        response = self.client.get('/health/1/doctor/sleep/')
+        content = json.loads(response.content)
+        self.assertTrue('sleep' in content['state']['doctor'].keys())
+        self.assertTrue('heart' not in content['state']['doctor'].keys())
+        response = self.client.get('/health/1/coach/sleep/')
+        content = json.loads(response.content)
+        self.assertTrue('sleep' in content['state']['coach'].keys())
+        self.assertTrue('heart' not in content['state']['coach'].keys())
+
+        # """DELETE the health of a particular uid and group and test - /health/<uid>/<group>/<test>/"""
+        # self.client.delete('/health/1/doctor/sleep/')
+        # response = self.client.get('/health/1/doctor/sleep/')
+        # content = json.loads(response.content)
+        # self.assertEqual(response.status_code, 400)
+        # response = self.client.get('/health/1/coach/sleep/')
+        # content = json.loads(response.content)
+        # self.assertEqual(response.status_code, 200)
+
     def test_get_health_test(self):
         """GET a list of all health tests - /health_test/"""
         response = self.client.get('/health_test/')
