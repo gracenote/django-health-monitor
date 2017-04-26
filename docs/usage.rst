@@ -44,6 +44,8 @@ The base `HealthTest` model serves the purpose of storing historical test result
 
 
         class HeartHealthTest(HealthTest):
+            heartrate = models.IntegerField()
+
             health_model = BodyHealth
             groups = ['doctor']
             test = 'heart'
@@ -62,6 +64,8 @@ The base `HealthTest` model serves the purpose of storing historical test result
                     return 1
 
         class SleepHealthTest(HealthTest):
+            hours = models.FloatField()
+
             health_model = BodyHealth
             groups = ['doctor']
             test = 'sleep'
