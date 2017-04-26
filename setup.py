@@ -10,7 +10,7 @@ except ImportError:
 
 from setuptools import find_packages
 
-version = '0.1.6'
+version = '0.2.0'
 
 if sys.argv[-1] == 'publish':
     try:
@@ -54,7 +54,7 @@ setup(
         'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache License 2.0',
+        'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
