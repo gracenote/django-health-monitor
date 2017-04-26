@@ -100,10 +100,9 @@ When defining derived `HealthTest` models such as `HeartHealthTest` and `SleepHe
 
 Additionally, a static method for `score` is used to interpret raw test result values and normalize and return a "health score".
 
-Note:
-
-- The inputs for the `score` method should be type-converted to the correct type (int, float, char, etc.) to clean data that is passed incorrectly.
-- The `score` method also must return an integer score otherwise it will fail.
+.. note::
+    - The inputs for the `score` method should be type-converted to the correct type (int, float, char, etc.) to clean data that is passed incorrectly.
+    - The `score` method also must return an integer score otherwise it will fail.
 
 ****************
 2. Configure API
