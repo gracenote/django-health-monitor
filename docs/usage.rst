@@ -108,6 +108,9 @@ Additionally, a static method for `score` is used to interpret raw test result v
 2. Configure API
 ****************
 
+API Endpoints
+-------------
+
 The following steps create an API with the following endpoints and actions:
 
 - /health/
@@ -144,8 +147,8 @@ And query string arguments:
 - <end_time> - a datetime string in  ISO 8601 format (optional)
 - example: /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
 
-Configure `HealthView` and `HealthTestView` Models
---------------------------------------------------
+Configure `HealthView` and `HealthTestView` Views
+-------------------------------------------------
 The following class definitions should be made to configure the API view classes.
 
     health/views.py::
