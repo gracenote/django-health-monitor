@@ -40,6 +40,8 @@ The base `HealthTest` model serves the purpose of storing historical test result
 
     models.py::
 
+        from django.db import models
+
         from health_monitor.models import HealthTest
 
 
