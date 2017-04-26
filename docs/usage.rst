@@ -13,7 +13,11 @@ To use Django Health Monitor in an application, there are three main steps:
 1. Define Models
 ****************
 
-Two main types of models are needed to track a system's state and to capture test results - `Health` and `HealthTest`.
+Two main types of models are needed to track a system's state and to capture test results - `Health` and `HealthTest`. For these examples, we will put the `Health` and the `HealthTest` related model and views into the application `health`.
+
+The application can be created with the command::
+
+    django-admin startapp health
 
 `Health`
 --------
@@ -24,7 +28,7 @@ To explain this concept, let's say that an overall `BodyHealth` depends on a "he
 
 Defining a derived `Health` model called `BodyHealth` is as simple as the following.
 
-    models.py::
+    health/models.py::
 
         from health_monitor.models import Health
 
@@ -38,11 +42,14 @@ Defining a derived `Health` model called `BodyHealth` is as simple as the follow
 
 The base `HealthTest` model serves the purpose of storing historical test results, turning raw test results into normalized scores, and automatically updating the overall health. For this example, let us define two health tests - `HeartHealthTest` and `SleepHealthTest`.
 
-    models.py::
+    health_test/models.py::
 
         from django.db import models
+        from health_monitor.models import Health, HealthTest
 
-        from health_monitor.models import HealthTest
+
+        class BodyHealth(Health):
+            pass
 
 
         class HeartHealthTest(HealthTest):
@@ -142,7 +149,7 @@ Configure `HealthView` and `HealthTestView` Models
 --------------------------------------------------
 The following class definitions should be made to configure the API view classes.
 
-    views.py::
+    health/views.py::
 
         from health_monitor.views import HealthTestView, HealthView
 
@@ -162,7 +169,7 @@ Map URLs to Views
 -----------------
 The following url definitions should be made to enable all of the endpoints and actions described above.
 
-    urls.py::
+    health/urls.py::
 
 
         from django.conf.urls import url
