@@ -42,7 +42,7 @@ Defining a derived `Health` model called `BodyHealth` is as simple as the follow
 
 The base `HealthTest` model serves the purpose of storing historical test results, turning raw test results into normalized scores, and automatically updating the overall health. For this example, let us define two health tests - `HeartHealthTest` and `SleepHealthTest`.
 
-    health_test/models.py::
+    health/models.py::
 
         from django.db import models
         from health_monitor.models import Health, HealthTest
@@ -169,12 +169,12 @@ Map URLs to Views
 -----------------
 The following url definitions should be made to enable all of the endpoints and actions described above.
 
-    health/urls.py::
+    <project>/urls.py::
 
 
         from django.conf.urls import url
 
-        from . import views
+        from health import views
 
 
         urlpatterns = [
