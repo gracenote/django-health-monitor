@@ -2,6 +2,12 @@
 Django Health Monitor
 =============================
 
+.. image:: https://img.shields.io/pypi/l/django-health-monitor.svg
+    :target: https://pypi.python.org/pypi/django-health-monitor
+
+.. image:: https://img.shields.io/pypi/pyversions/django-health-monitor.svg
+    :target: https://pypi.python.org/pypi/django-health-monitor
+
 .. image:: https://badge.fury.io/py/django-health-monitor.png
     :target: https://badge.fury.io/py/django-health-monitor
 
