@@ -175,12 +175,24 @@ Where `health_model` is set to the `Health` model defined above.
 
         from django.utils.decorators import method_decorator
         from django.views.decorators.csrf import csrf_exempt
+        from health_monitor.views import HealthTestView, HealthView
+
+        from .models import BodyHealth
+
+
+        class BodyHealthView(HealthView):
+            health_model = BodyHealth
+
+            @method_decorator(csrf_exempt)
+            def dispatch(self, request, *args, **kwargs):
+                return super(BodyHealthView, self).dispatch(request, *args, **kwargs)
 
 
         class BodyHealthTestView(HealthTestView):
             @method_decorator(csrf_exempt)
             def dispatch(self, request, *args, **kwargs):
                 return super(BodyHealthTestView, self).dispatch(request, *args, **kwargs)
+
 
 Map URLs to Views
 -----------------
@@ -221,14 +233,14 @@ At this point, there should be a working API that will store raw 'health test' r
         In [5]: r.json()
         Out[5]: {u'tests': [u'heart', u'sleep']}
 
-    Let's post a 'heart' test result where 'heartrate' equals 60 for an asset with a `uid` of 1 and see what happens::
+    Let's post a 'heart' test result where 'heartrate' equals 90 for an asset with a `uid` of 1 and see what happens::
 
-        In [6]: r = requests.post('http://localhost:8000/health_test/heart/1/', data={'heartrate': 60})
+        In [6]: r = requests.post('http://localhost:8000/health_test/heart/1/', data={'heartrate': 90})
         In [7]: r.json()
-        Out[7]: {u'message': u'heart score changed to 1 for uid 1', u'score': 1}
+        Out[7]: {u'message': u'heart score changed to 2 for uid 1', u'score': 2}
         In [8]: r = requests.get('http://localhost:8000/health_test/heart/1/')
         In [9]: r.json()
-        Out[9]: [{u'heartrate': 60, u'time': u'2017-04-27T19:08:04.381651+00:00', u'uid': 1}]
+        Out[9]: [{u'heartrate': 90, u'time': u'2017-04-27T20:47:34.594848+00:00', u'uid': 1}]
         In [10]: r = requests.get('http://localhost:8000/health/')
         In [11]: r.json()
         Out[11]: {u'uids': [1]}
@@ -237,50 +249,74 @@ At this point, there should be a working API that will store raw 'health test' r
         Out[13]:
         {
             u'severity': {
-                u'doctor': {u'score': 1, u'updated': u'2017-04-27T19:08:04.385Z'}
+                u'doctor': {u'score': 2, u'updated': u'2017-04-27T20:47:34.597Z'}
             },
             u'state': {
                 u'doctor': {
-                    u'heart': {u'score': 1, u'updated': u'2017-04-27T19:08:04.385Z'}
+                    u'heart': {u'score': 2, u'updated': u'2017-04-27T20:47:34.597Z'}
                 }
             },
             u'uid': 1
         }
 
     At this point, we can see that:
-        - On lines 6 and 7, we received a response for our post indicating that the score was changed to 1. (Recall that from our model definition, a heartrate of 80 or below results in a `score` of 1).
+        - On lines 6 and 7, we received a response for our post indicating that the score was changed to 2. (Recall that from our model definition, a heartrate between 81 and 100 results in a `score` of 2).
         - On lines 8 and 9, we can see the history of heart tests for `uid` 1.
         - On lines 10 and 11, we can see that there is now a `health` instance generated for `uid` 1.
-        - On lines 12 and 13, we can see that the resulting `health` instance has `state` and `severity` entries for the group 'doctor'. (Recall that from our model definition, the 'heart' test belongs to the `group` 'doctor'.
+        - On lines 12 and 13, we can see that the resulting `health` instance has `state` and `severity` entries for the group 'doctor' with `scores` of 2 for both. (Recall that from our model definition, the 'heart' test belongs to the `group` 'doctor'.
 
-    Now let's post a 'sleep' test result where 'hours' equals 5.0 for the same asset with `uid` of 1 and see what happens::
+    Now let's post a 'sleep' test result where 'hours' equals 8.0 for the same asset with `uid` of 1 and see what happens::
 
-        In [14]: r = requests.post('http://localhost:8000/health_test/sleep/1/', data={'hours': 5.0})
+        In [14]: r = requests.post('http://localhost:8000/health_test/sleep/1/', data={'hours': 8.0})
         In [15]: r.json()
-        Out[15]: {u'message': u'sleep score changed to 3 for uid 1', u'score': 3}
+        Out[15]: {u'message': u'sleep score changed to 1 for uid 1', u'score': 1}
         In [16]: r = requests.get('http://localhost:8000/health/1/')
         In [17]: r.json()
         Out[17]:
         {
             u'severity': {
-                u'coach': {u'score': 3, u'updated': u'2017-04-27T19:18:00.654Z'},
-                u'doctor': {u'score': 3, u'updated': u'2017-04-27T19:18:00.654Z'}
+                u'coach': {u'score': 1, u'updated': u'2017-04-27T20:51:31.674Z'},
+                u'doctor': {u'score': 2, u'updated': u'2017-04-27T20:47:34.597Z'}
             },
             u'state': {
                 u'coach': {
-                    u'sleep': {u'score': 3, u'updated': u'2017-04-27T19:18:00.654Z'}
+                    u'sleep': {u'score': 1, u'updated': u'2017-04-27T20:51:31.674Z'}
                 },
                 u'doctor': {
-                    u'heart': {u'score': 1, u'updated': u'2017-04-27T19:08:04.385Z'},
-                    u'sleep': {u'score': 3, u'updated': u'2017-04-27T19:18:00.654Z'}
+                    u'heart': {u'score': 2, u'updated': u'2017-04-27T20:47:34.597Z'},
+                    u'sleep': {u'score': 1, u'updated': u'2017-04-27T20:51:31.673Z'}
                 }
             },
             u'uid': 1
         }
 
     Now, we can see that:
-        - On lines 14 and 15, we received a response for our post indicating that the score was changed to 3. (See above model definition for sleep scoring criteria.)
-        - On lines 16 and 17, we now have additional `state` and `severity` entries for the `group` coach since the sleep test belongs to the `groups` 'doctor' and 'coach'. The `score` for the sleep test has been added in both `state` groups and the `severity` has been updated to 3 for both groups since the `severity score` is calculated as the maximum of all `state scores`.
+        - On lines 14 and 15, we received a response for our post indicating that the score was changed to 1. (See above model definition for sleep scoring criteria.)
+        - On lines 16 and 17, we now have additional `state` and `severity` entries for the `group` 'coach' since the sleep test belongs to the `groups` 'doctor' and 'coach'. The `state` for both groups has been updated to include the sleep score, however, only the `severity score` for 'coach' has been set to 1 and the `severity score` for 'doctor' remains set to 2 since `severity` is calculated as the maximum of all of the `state scores`.
+
+    Finally, let's try a delete on this `health` instance. This is often useful if an entire test is deprecated, a `group` is removed, or a `uid` is removed from a test run since the `health` will persist unless deleted. Let's see what happens::
+
+        In [18]: r = requests.delete('http://localhost:8000/health/1/doctor/heart/')
+        In [19]: r.json()
+        Out[19]: {u'message': u'heart test deleted from doctor group in 1 health'}
+        In [20]: r = requests.get('http://localhost:8000/health/1/')
+        In [21]: r.json()
+        Out[21]:
+        {
+            u'severity': {
+                u'coach': {u'score': 1, u'updated': u'2017-04-27T20:55:06.311Z'},
+                u'doctor': {u'score': 1, u'updated': u'2017-04-27T21:24:44.047Z'}
+            },
+            u'state': {
+                u'coach': {
+                    u'sleep': {u'score': 1, u'updated': u'2017-04-27T20:55:06.311Z'}
+                },
+                u'doctor': {
+                    u'sleep': {u'score': 1, u'updated': u'2017-04-27T20:55:06.311Z'}
+                }
+            },
+            u'uid': 1
+        }
 
 *********************************
 3. Customize Notification Filters
