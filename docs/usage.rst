@@ -167,21 +167,6 @@ The following class definitions should be made to configure the API view classes
 
 Where `health_model` is set to the `Health` model defined above.
 
-.. note::
-    - By default, to post 'health test' results, a CSRF token will need to be passed in the Header in the form `{X-CSRFTOKEN: <token>}` where `<token>` is the CSRF token. More information can be found in this `Stack Overflow discussion <http://stackoverflow.com/questions/13567507/passing-csrftoken-with-python-requests>`_.
-    - Alternately, the `HealthTest` view can be overwritten to CSRF exempt, which will allow 'health test' results to be posted without a CSRF token in the header by modifying the view from above as the following.
-
-    health/views.py::
-
-        from django.utils.decorators import method_decorator
-        from django.views.decorators.csrf import csrf_exempt
-
-
-        class BodyHealthTestView(HealthTestView):
-            @method_decorator(csrf_exempt)
-            def dispatch(self, request, *args, **kwargs):
-                return super(BodyHealthTestView, self).dispatch(request, *args, **kwargs)
-
 Map URLs to Views
 -----------------
 The following url definitions should be made to enable all of the endpoints and actions described above.
@@ -196,9 +181,9 @@ The following url definitions should be made to enable all of the endpoints and 
 
         urlpatterns = [
             url(r'^health/$', views.BodyHealthView.as_view()),
-            url(r'^health/(?P<uid>[\d]*)/$', views.BodyHealthView.as_view()),
-            url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
-            url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\w]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
             url(r'^health_test/$', views.BodyHealthTestView.as_view()),
             url(r'^health_test/(?P<test>[\w-]*)/$', views.BodyHealthTestView.as_view()),
             url(r'^health_test/(?P<test>[\w-]*)/(?P<uid>[\d]*)/$', views.BodyHealthTestView.as_view()),
