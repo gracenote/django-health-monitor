@@ -218,8 +218,8 @@ The following url definitions should be made to enable all of the endpoints and 
 
 In this example, `BodyHealthView` and `BodyHealthTestView` are the names of the View models that we defined in the previous section.
 
-Test API
---------
+Test the API
+------------
 
 At this point, there should be a working API that will store raw 'health test' results as well as generating a normalized 'health' state. Let's try some sample calls to see how the API works. For these examples we will be using the Python `Requests <http://docs.python-requests.org/en/master/>`_ package and will run the Django project locally. For these examples, CSRF checks have been disabled for clarity.
 
