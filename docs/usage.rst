@@ -196,9 +196,9 @@ The following url definitions should be made to enable all of the endpoints and 
 
         urlpatterns = [
             url(r'^health/$', views.BodyHealthView.as_view()),
-            url(r'^health/(?P<uid>[\w]*)/$', views.BodyHealthView.as_view()),
-            url(r'^health/(?P<uid>[\w]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
-            url(r'^health/(?P<uid>[\w]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\d]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
             url(r'^health_test/$', views.BodyHealthTestView.as_view()),
             url(r'^health_test/(?P<test>[\w-]*)/$', views.BodyHealthTestView.as_view()),
             url(r'^health_test/(?P<test>[\w-]*)/(?P<uid>[\d]*)/$', views.BodyHealthTestView.as_view()),
