@@ -22,9 +22,9 @@ The application can be created with the command::
 `Health`
 --------
 
-The base `Health` model serves the purpose of storing an asset's latest "health test" results from a variety tests, normalized as test "scores" in a "health state". Additionally, the highest result from the normalized test scores equals an asset's "health severity", which is used to quickly highlight which assets have an elevated status and should be investigated.
+The base `Health` model serves the purpose of storing an asset's latest `health test` results from a variety tests, normalized as test `scores` in a `health state`. Additionally, the highest result from the normalized test scores equals an asset's `health severity`, which is used to quickly highlight which assets have an elevated status and should be investigated.
 
-To explain this concept, let's say that an overall `BodyHealth` depends on a "heart" test result and a "sleep" test result, each of which have four normalized test scores - 1 for good, 2 for mildly bad, 3 for moderately bad, and 4 for extremely bad. For a particular person, a "heart" score of 3 and a "sleep" score of 2 would result in a state of `{'heart': 3, 'sleep': 2}` and a severity of 3. If later the "sleep" score changed to 1, the state will change to `{'heart': 3, 'sleep': 1}` and remain a severity of 3 since severity is calculated as the max score within state. If later the "heart" score changed to 1, the resultant state would be `{'heart': 1, 'sleep': 1}` and the severity would drop to 1 indicating an overall "good" health.
+To explain this concept, let's say that an overall `BodyHealth` depends on a 'heart' test result and a 'sleep' test result, each of which have four normalized test scores - 1 for good, 2 for mildly bad, 3 for moderately bad, and 4 for extremely bad. For a particular person, a 'heart' score of 3 and a 'sleep' score of 2 would result in a state of `{'heart': 3, 'sleep': 2}` and a severity of 3. If later the 'sleep' score changed to 1, the state will change to `{'heart': 3, 'sleep': 1}` and remain a severity of 3 since severity is calculated as the max score within state. If later the 'heart' score changed to 1, the resultant state would be `{'heart': 1, 'sleep': 1}` and the severity would drop to 1 indicating an overall "good" health.
 
 Defining a derived `Health` model called `BodyHealth` is as simple as the following.
 
@@ -95,10 +95,10 @@ The base `HealthTest` model serves the purpose of storing historical test result
 When defining derived `HealthTest` models such as `HeartHealthTest` and `SleepHealthTest`, there are three attributes that are required - `health_model`, `groups`, and `test`.
 
 - `health_model` is an association to the model that holds the states (defined above)
-- `groups` is a list of user-defined groups that each test will be associated with and there must be at minimum one group in order for test results to update the "health state"
+- `groups` is a list of user-defined groups that each test will be associated with and there must be at minimum one group in order for test results to update the `health state`
 - `test` is a string that will be used to reference the test in the API (following section)
 
-Additionally, a static method for `score` is used to interpret raw test result values and normalize and return a "health score".
+Additionally, a static method for `score` is used to interpret raw test result values and normalize and return a `health score`.
 
 .. note::
     - The inputs for the `score` method should be type-converted to the correct type (int, float, char, etc.) to clean data that is passed incorrectly.
@@ -260,10 +260,10 @@ At this point, there should be a working API that will store raw 'health test' r
         }
 
     At this point, we can see that:
-        - On lines 6 and 7, we received a response for our post indicating that the score was changed to 2. (Recall that from our model definition, a heartrate between 81 and 100 results in a `score` of 2).
-        - On lines 8 and 9, we can see the history of heart tests for `uid` 1.
-        - On lines 10 and 11, we can see that there is now a `health` instance generated for `uid` 1.
-        - On lines 12 and 13, we can see that the resulting `health` instance has `state` and `severity` entries for the group 'doctor' with `scores` of 2 for both. (Recall that from our model definition, the 'heart' test belongs to the `group` 'doctor'.
+        - On lines 6 and 7, we received a response for our post indicating that the score was changed to 2. (Recall that from our model definition, a 'heartrate' between 81 and 100 results in a `score` of 2).
+        - On lines 8 and 9, the history of 'heart' tests for `uid` 1 is now visible.
+        - On lines 10 and 11, there is now a `health` instance generated for `uid` 1.
+        - On lines 12 and 13, the resulting `health` instance has `state` and `severity` entries for the group 'doctor' with `scores` of 2 for both. (Recall that from our model definition, the 'heart' test belongs to the `group` 'doctor'.
 
     Now let's post a 'sleep' test result where 'hours' equals 8.0 for the same asset with `uid` of 1 and see what happens::
 
@@ -317,6 +317,10 @@ At this point, there should be a working API that will store raw 'health test' r
             },
             u'uid': 1
         }
+
+    We see that:
+        - On lines 18 and 19, we received a response that the 'heart' `health test` was deleted from the 'doctor' `group` in 1's `health`.
+        - On lines 20 and 21, the `health state` was updated with the removal of the 'heart' `health test` and the `severity` for the 'doctor' `group` was updated accordingly.
 
 *********************************
 3. Customize Notification Filters
