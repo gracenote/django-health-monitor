@@ -6,7 +6,7 @@ To use Django Health Monitor in an application, there are three main steps:
 
 1. Define Models
 2. Configure API
-3. Customize Notification Filters (optional)
+3. Configure Health Alarm (optional)
 
 
 ****************
@@ -108,8 +108,8 @@ Additionally, a static method for `score` is used to interpret raw test result v
 2. Configure API
 ****************
 
-API Endpoints
--------------
+API Endpoints for `Health` and `HealthTest` Models
+--------------------------------------------------
 
 The following steps create an API with the following endpoints and actions:
 
@@ -142,9 +142,9 @@ Where:
 
 And query string arguments:
 
-- <uids> - a comma separated list of uids
-- <start_time> - a datetime string in ISO 8601 format (optional)
-- <end_time> - a datetime string in  ISO 8601 format (optional)
+- <uids> - is a comma separated list of uids.
+- <start_time> - is a datetime string in ISO 8601 format (optional).
+- <end_time> - is a datetime string in  ISO 8601 format (optional).
 - example: /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
 
 Configure `HealthView` and `HealthTestView` Views
@@ -322,7 +322,70 @@ At this point, there should be a working API that will store raw 'health test' r
         - On lines 18 and 19, we received a response that the 'heart' `health test` was deleted from the 'doctor' `group` in 1's `health`.
         - On lines 20 and 21, the `health state` was updated with the removal of the 'heart' `health test` and the `severity` for the 'doctor' `group` was updated accordingly.
 
-*********************************
-3. Customize Notification Filters
-*********************************
-TODO
+*************************
+3. Configure Health Alarm
+*************************
+
+API Endpoints for `HealthAlarm` Model
+-------------------------------------
+
+The following steps create an API with the following endpoints and actions:
+
+- /health_alarm/
+    - GET a list of all health alarm categories
+- /health_alarm/<test>/?score=<score>&aggregate_percent=<aggregate_percent>&repetition=<repetition>&repetition_percent=<repetition_percent>
+    - GET a health alarm for a particular test (calculate whether or not an alarm condition exists and return `uids` in failure state)
+
+Where:
+
+- <test> is the name of a health test.
+
+And query string arguments:
+
+- <score> - is the minimum `score` needed to trigger a failure.
+- <aggregate_percent> - is the minimum `percent` of total assets in a failure state needed to trigger an alarm (optional). This is by default 0.
+- <repetition> - is the minimum number of successive test results in a failure state needed to trigger an alarm (optional). This is by default 1.
+- <repetition_percent> - is the minimum percent within the prior defined repetition in a failure state needed to trigger an alarm (optional). This is by default 100.
+
+Let's illustrate this concept with an example. Let's say the following test results have been recorded for assets with <uids> of 1, 2, and 3 at times t1, t2, t3, t4, and t5.
+
+    heartrate results::
+
+           t1   t2   t3   t4   t5
+        1: 61,  63,  81,  69,  62
+        2: 65,  94,  115, 112, 110
+        3: 119, 110, 111,  94, 59
+
+
+    Let's recall the `score` criteria defined earlier::
+
+        if heartrate > 120:
+            return 4
+        elif heartrate > 100:
+            return 3
+        elif heartrate > 80:
+            return 2
+        else:
+            return 1
+
+    The normalized results then become::
+
+          t1 t2 t3 t4 t5
+        1: 1, 1, 2, 1, 1
+        2: 1, 2, 3, 3, 3
+        3: 3, 3, 3, 2, 1
+
+Let's look at some example responses if we were to pass different query strings at different times:
+
+    - @t1: GET /health_alarm/heart/?score=2
+        - returns `[3]`.
+    - @t1: GET /health_alarm/heart/?score=2&aggregate_percent=50
+        - returns `[]` since only 1/3 assets exhibit a failure condition.
+    - @t3: GET /health_alarm/heart/?score=2&repetition=2
+        - returns `[2, 3]` since @t2, the health score for `uid` 1 is 1 and is therefore in a pass state.
+    - @t5: GET /health_alarm/heart/?score=2&repetition=3&repetition_percent=25
+        - returns `[1, 2, 3]` since all three assets have a failure rate higher than 25% from t3 to t5.
+    - @t5: GET /health_alarm/heart/?score=2&repetition=3
+        - returns `[2]`
+
+These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetition_percent` are meant to help make tests less sensitive to small system-wide failures (raising `aggregate_percent`), less sensitive to failure "blips" that automatically correct themselves (increasing `repetition`), more sensitive to failures (lowering `repetition_percent`), etc.
