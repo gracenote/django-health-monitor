@@ -31,17 +31,26 @@ class Health(models.Model):
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
 
-    def _calculate_severity(self, g):
-        """Return the highest score in state dict."""
+    def _calculate_severity(self, group):
+        """Return a severity calculation (i.e. highest score in state dict) of a group.
+
+        Arguments:
+        g -- group
+        """
         test_scores = [1, ]
-        for t in self.state[g].keys():
-            if self.state[g][t]['score']:
-                test_scores.append(self.state[g][t]['score'])
+        for t in self.state[group].keys():
+            if self.state[group][t]['score']:
+                test_scores.append(self.state[group][t]['score'])
 
         return max(test_scores)
 
     def update_score(self, test, score):
-        """Update the health state, severity, and history based on the test name and score."""
+        """Update the health state, health severity, and health history based on the test name and score.
+
+        Arguments:
+        test  -- test
+        score -- score
+        """
 
         # update state and severity
         for group in HealthTest._get_groups(test):
@@ -62,7 +71,7 @@ class Health(models.Model):
         self.save()
 
     def delete_test(self, test):
-        """Delete test from all groups."""
+        """Delete test from all groups in health state and update health severity."""
         for group in self.state.keys():
             if test in self.state[group].keys():
                 del(self.state[group][test])
@@ -70,20 +79,20 @@ class Health(models.Model):
         self.save()
 
     def delete_group(self, group):
-        """Delete group from state and severity."""
+        """Delete group from health state and severity."""
         del(self.state[group])
         del(self.severity[group])
         self.save()
 
     def delete_group_test(self, group, test):
-        """Delete test from specified group."""
+        """Delete test entry from specified group within health state and update severity."""
         if test in self.state[group].keys():
             del(self.state[group][test])
             self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
 
     def get_latest_scores(self, test, repetition):
-        """Get latest scores from HealthTest historical records."""
+        """Get latest x scores from HealthTest historical records where x is the number of repetitions."""
         test_model = HealthTest._get_model(test)
         return [x.get_score() for x in test_model.objects.filter(uid=self.uid).order_by('-time')[:repetition]]
 
@@ -101,7 +110,7 @@ class Health(models.Model):
 class HealthAlarm(object):
     @classmethod
     def _get_associated_healths(cls, group, test):
-        """Return healths with nested group and test key."""
+        """Return a subset of healths that contain the nested group and test key."""
         healths = []
         for health in cls.health_model.objects.all():
             if group in health.state.keys():
@@ -112,7 +121,16 @@ class HealthAlarm(object):
 
     @classmethod
     def calculate_alarms(cls, group, test, score, aggregate_percent=0, repetition=1, repetition_percent=100):
-        """Return a list of asset uids based off of filtering criteria."""
+        """Return a list of asset uids based off of filtering criteria.
+
+        Arguments:
+        group              -- group name
+        test               -- test name
+        score              -- minimum score to tigger an alarm
+        aggregate_percent  -- minimum percentage of test failures to trigger an alarm
+        repetition         -- minimum number of test failures in a row to trigger an alarm
+        repetition_percent -- minimum percentage of failures within repetition to trigger an alarm
+        """
         healths = cls._get_associated_healths(group, test)
 
         # step 1: filter failing assets by score, if repetition is less than 100%, all healths must be checked
@@ -158,6 +176,7 @@ class HealthTest(models.Model):
 
     @classmethod
     def calculate_score(cls, **kwargs):
+        """Returns the score calculated from derived class' score() method and inputted kwargs."""
         score = cls.score(**kwargs)
         if type(score) != int:
             raise TypeError('score method should return an integer')
@@ -167,21 +186,31 @@ class HealthTest(models.Model):
             return score
 
     def get_score(self):
+        """Returns the score calculated using self.calculate_score() and instance attributes (db columns)."""
         kwargs = {x.name: getattr(self, x.name) for x in type(self)._meta.fields}
         return type(self).calculate_score(**kwargs)
 
     @classmethod
     def get_history(cls, uids, start_time=timezone.datetime.min.replace(tzinfo=pytz.UTC), end_time=timezone.datetime.max.replace(tzinfo=pytz.UTC)):
+        """Returns historical test results.
+
+        Arguments:
+        uids       -- a list of uids
+        start_time -- a datetime object
+        end_time   -- a datetime object
+        """
         return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
 
     @staticmethod
     def _get_tests(group=None):
+        """Return list of test names associated with a group."""
         if not group:
             return [t.test for t in HealthTest.__subclasses__()]
         return [t.test for t in HealthTest.__subclasses__() if group in t.groups]
 
     @staticmethod
     def _get_groups(test):
+        """Return a list of group names that a test belongs to."""
         for t in HealthTest.__subclasses__():
             if test == t.test:
                 return t.groups
@@ -189,6 +218,7 @@ class HealthTest(models.Model):
 
     @staticmethod
     def _get_model(test):
+        """Return the model associated with a test."""
         for t in HealthTest.__subclasses__():
             if test == t.test:
                 return t

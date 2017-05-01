@@ -7,14 +7,23 @@ from django.utils import timezone
 
 
 def init_score_dict(t, k):
-    """Initializes k: {} entry in dict, t if not present."""
+    """Return an initialized dictionary with 'score' and 'updated' keys and values if not present.
+
+    Arguments:
+    t -- dictionary
+    k -- key
+    """
     if k not in t.keys():
         t[k] = {'score': None, 'updated': timezone.now()}
     return t
 
 
 def update_score_dict(t, s):
-    """Updates score in dict, and changes update time if value changes."""
+    """Return a dictionary with updated score and updated time if score changes.
+
+    t -- dictionary
+    s -- score
+    """
     if s != t['score']:
         t['score'] = s
         t['updated'] = timezone.now()
@@ -22,14 +31,20 @@ def update_score_dict(t, s):
 
 
 def datetime_to_iso(t):
-    """Converts a datetime object to ISO format string."""
+    """Return an ISO 8601 formatted date string of a datetime object.
+
+    t -- datetime object
+    """
     if isinstance(t, datetime.datetime):
         return t.isoformat()
     return t
 
 
 def iso_to_datetime(t):
-    """Converts an ISO format string to a datetime object with UTC timezone."""
+    """Return a datetime object with UTC timezone of an ISO 8601 formatted date string.
+
+    t -- ISO 8601 formatted date string
+    """
     t = t.replace(' ', '+')
     try:
         return dateutil.parser.parse(t).astimezone(tz=pytz.UTC)
@@ -38,7 +53,11 @@ def iso_to_datetime(t):
 
 
 def push_pop_deque(e, l):
-    """Push new element on left side of and pop oldest element from right side of a list using deque."""
+    """Return a list with a new element pushed in the 0 position and oldest element popped from the -1 position using deque.
+
+    e -- element
+    l -- list
+    """
     o = deque(l)
     o.appendleft(e)
     o.pop()
