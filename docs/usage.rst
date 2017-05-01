@@ -390,3 +390,41 @@ Let's look at some example responses if we were to pass different query strings 
         - returns `[2]`
 
 These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetition_percent` are meant to help make tests less sensitive to small system-wide failures (raising `aggregate_percent`), less sensitive to failure "blips" that automatically correct themselves (increasing `repetition`), more sensitive to failures within a sequence of tests (lowering `repetition_percent`), etc.
+
+Configure `HealthAlarm` Model
+-----------------------------
+
+In order to enable health alarms, a derived `HealthAlarm` model will need to be defined, which will point related methods to the derviced `Health` model defined above. For our example, we will use the `BodyHealth` model defined earlier and call the new derived `HealthAlarm` model `BodyHealthAlarm`.
+
+    health/models.py::
+
+        from health_monitor.models import HealthAlarm
+
+
+        class BodyHealthAlarm(HealthAlarm):
+            health_model = BodyHealth
+
+If following the above example, the new `models.py` file will look like the following with the `HealthTest` model details omitted.
+
+    health/models.py::
+
+        from django.db import models
+
+        from health_monitor.models import Health, HealthTest, HealthAlarm
+
+
+        class BodyHealth(Health):
+            pass
+
+
+        class BodyHealthAlarm(HealthAlarm):
+            health_model = BodyHealth
+
+
+        class HeartHealthTest(HealthTest):
+            ...
+
+
+        class SleepHealthTest(HealthTest):
+            ...
+    
