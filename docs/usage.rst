@@ -60,7 +60,7 @@ The base `HealthTest` model serves the purpose of storing historical test result
             test = 'heart'
 
             @staticmethod
-            def score(heartrate):
+            def score(heartrate, **kwargs):
                 heartrate = int(heartrate)
 
                 if heartrate > 120:
@@ -80,7 +80,7 @@ The base `HealthTest` model serves the purpose of storing historical test result
             test = 'sleep'
 
             @staticmethod
-            def score(hours):
+            def score(hours, **kwargs):
                 hours = float(hours)
 
                 if sleep < 4:
@@ -101,6 +101,7 @@ When defining derived `HealthTest` models such as `HeartHealthTest` and `SleepHe
 Additionally, a static method for `score` is used to interpret raw test result values and normalize and return a `health score`.
 
 .. note::
+    - The definition of score must include an input for `**kwargs`.
     - The inputs for the `score` method should be type-converted to the correct type (int, float, char, etc.) to clean data that is passed incorrectly.
     - The `score` method also must return an integer score otherwise it will fail.
 
@@ -388,4 +389,4 @@ Let's look at some example responses if we were to pass different query strings 
     - @t5: GET /health_alarm/heart/?score=2&repetition=3
         - returns `[2]`
 
-These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetition_percent` are meant to help make tests less sensitive to small system-wide failures (raising `aggregate_percent`), less sensitive to failure "blips" that automatically correct themselves (increasing `repetition`), more sensitive to failures (lowering `repetition_percent`), etc.
+These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetition_percent` are meant to help make tests less sensitive to small system-wide failures (raising `aggregate_percent`), less sensitive to failure "blips" that automatically correct themselves (increasing `repetition`), more sensitive to failures within a sequence of tests (lowering `repetition_percent`), etc.
