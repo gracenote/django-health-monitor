@@ -1,3 +1,4 @@
+from collections import deque
 import datetime
 import dateutil.parser
 import pytz
@@ -34,3 +35,11 @@ def iso_to_datetime(t):
         return dateutil.parser.parse(t).astimezone(tz=pytz.UTC)
     except Exception:
         return dateutil.parser.parse(t)
+
+
+def push_pop_deque(e, l):
+    """Push new element on left side of and pop oldest element from right side of a list using deque."""
+    o = deque(l)
+    o.appendleft(e)
+    o.pop()
+    return list(o)

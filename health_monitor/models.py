@@ -26,6 +26,7 @@ class Health(models.Model):
     uid = models.IntegerField(primary_key=True, db_index=True)
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
+    history = JSONField(default={}, blank=True, null=True)
 
     def __unicode__(self):      # For Python 2, use __str__ on Python 3
         return unicode(self.uid)
@@ -41,6 +42,8 @@ class Health(models.Model):
 
     def update_score(self, test, score):
         """Update the health based on the test name and score."""
+
+        # update state and severity
         for group in HealthTest._get_groups(test):
             if test in HealthTest._get_tests(group):
                 if group not in self.state.keys():
@@ -49,6 +52,13 @@ class Health(models.Model):
                 self.state[group][test] = utils.update_score_dict(self.state[group][test], score)
                 self.severity = utils.init_score_dict(self.severity, group)
                 self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
+
+        # update history
+        if test not in self.history.keys():
+            self.history[test] = [score]
+        else:
+            self.history[test] = utils.push_pop_deque(score, self.history[test])
+
         self.save()
 
     def delete_test(self, test):
@@ -71,6 +81,17 @@ class Health(models.Model):
             del(self.state[group][test])
             self.severity[group] = utils.update_score_dict(self.severity[group], self._calculate_severity(group))
         self.save()
+
+    def get_latest_scores(self, test, repetition):
+        test_model = HealthTest._get_model(test)
+        return [x.get_score() for x in test_model.objects.filter(uid=self.uid).order_by('-time')[:repetition]]
+
+    def get_history(self, test, repetition):
+        """Return the latest x test scores where x is the number of repetitions."""
+        if not len(self.history[test]) > repetition:
+            self.history[test] = self.get_latest_scores(test, repetition)
+            self.save()
+        return self.history[test][0:repetition]
 
     class Meta(object):
         abstract = True
