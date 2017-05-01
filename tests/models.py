@@ -1,10 +1,14 @@
 from django.db import models
 
-from health_monitor.models import Health, HealthTest
+from health_monitor.models import Health, HealthTest, HealthAlarm
 
 
 class BodyHealth(Health):
     pass
+
+
+class BodyHealthAlarm(HealthAlarm):
+    health_model = BodyHealth
 
 
 class HeartHealthTest(HealthTest):

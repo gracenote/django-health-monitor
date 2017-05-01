@@ -41,7 +41,7 @@ class Health(models.Model):
         return max(test_scores)
 
     def update_score(self, test, score):
-        """Update the health based on the test name and score."""
+        """Update the health state, severity, and history based on the test name and score."""
 
         # update state and severity
         for group in HealthTest._get_groups(test):
@@ -83,18 +83,56 @@ class Health(models.Model):
         self.save()
 
     def get_latest_scores(self, test, repetition):
+        """Get latest scores from HealthTest historical records."""
         test_model = HealthTest._get_model(test)
         return [x.get_score() for x in test_model.objects.filter(uid=self.uid).order_by('-time')[:repetition]]
 
     def get_history(self, test, repetition):
-        """Return the latest x test scores where x is the number of repetitions."""
-        if not len(self.history[test]) > repetition:
+        """Return the cached x test scores or retrieve from historical records where x is the number of repetitions."""
+        if not len(self.history[test]) >= repetition:
             self.history[test] = self.get_latest_scores(test, repetition)
             self.save()
         return self.history[test][0:repetition]
 
     class Meta(object):
         abstract = True
+
+
+class HealthAlarm(object):
+    @classmethod
+    def _get_associated_healths(cls, group, test):
+        """Return healths with nested group and test key."""
+        healths = []
+        for health in cls.health_model.objects.all():
+            if group in health.state.keys():
+                if test in health.state[group].keys():
+                    healths.append(health)
+
+        return healths
+
+    @classmethod
+    def calculate_alarms(cls, group, test, score, aggregate_percent=0, repetition=1, repetition_percent=100):
+        """Return a list of asset uids based off of filtering criteria."""
+        healths = cls._get_associated_healths(group, test)
+
+        # step 1: filter failing assets by score, if repetition is less than 100%, all healths must be checked
+        if repetition == 100:
+            failing_healths_by_score = [x for x in healths if x.state[group][test]['score'] >= score]
+        else:
+            failing_healths_by_score = healths
+
+        # step 2: filter failing assets by repetition criteria
+        failing_healths = []
+        for health in failing_healths_by_score:
+            score_history = health.get_history(test, repetition)
+            if (100 * len([x for x in score_history if x >= score]) / len(score_history)) >= repetition_percent:
+                failing_healths.append(health)
+
+        # step 3: return empty array if percentage of failing assets is below aggregate_percent
+        if (len(failing_healths) / len(healths)) < (aggregate_percent / 100):
+            return []
+        else:
+            return [x.uid for x in failing_healths]
 
 
 class HealthTest(models.Model):
