@@ -56,3 +56,11 @@ class HealthTestUnitTestCase(TestCase):
         self.assertEqual(2, len(results))
         results = SleepHealthTest.get_history(uids=[2], start_time=time_2)
         self.assertEqual(1, len(results))
+
+    def test_get_score(self):
+        s = SleepHealthTest.create(uid=1, hours=8)
+        self.assertEqual(1, s.get_score())
+
+        s.hours = 5.5
+        s.save()
+        self.assertEqual(3, s.get_score())

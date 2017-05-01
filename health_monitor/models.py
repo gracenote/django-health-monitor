@@ -93,12 +93,12 @@ class HealthTest(models.Model):
         health_test.save()
 
         h, _ = cls.health_model.objects.get_or_create(uid=uid)
-        h.update_score(test=cls.test, score=cls.get_score(**kwargs))
+        h.update_score(test=cls.test, score=cls.calculate_score(**kwargs))
 
         return health_test
 
     @classmethod
-    def get_score(cls, **kwargs):
+    def calculate_score(cls, **kwargs):
         score = cls.score(**kwargs)
         if type(score) != int:
             raise TypeError('score method should return an integer')
@@ -106,6 +106,10 @@ class HealthTest(models.Model):
             raise ValueError('score method should return a positive integer')
         else:
             return score
+
+    def get_score(self):
+        kwargs = {x.name: getattr(self, x.name) for x in type(self)._meta.fields}
+        return type(self).calculate_score(**kwargs)
 
     @classmethod
     def get_history(cls, uids, start_time=timezone.datetime.min.replace(tzinfo=pytz.UTC), end_time=timezone.datetime.max.replace(tzinfo=pytz.UTC)):

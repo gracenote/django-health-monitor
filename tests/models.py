@@ -15,7 +15,7 @@ class HeartHealthTest(HealthTest):
     test = 'heart'
 
     @staticmethod
-    def score(heartrate):
+    def score(heartrate, **kwargs):
         heartrate = int(heartrate)
         if heartrate > 120:
             return 4
@@ -35,7 +35,7 @@ class SleepHealthTest(HealthTest):
     test = 'sleep'
 
     @staticmethod
-    def score(hours):
+    def score(hours, **kwargs):
         hours = float(hours)
         if hours < 4:
             return 4
