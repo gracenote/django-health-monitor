@@ -65,7 +65,7 @@ Credits
 
 There were many people involved in creating  this application that were not involved with the coding, but deserve a bulk of the credit. They helped design the application's underlying logic, and continually used it and recommended new ways to quickly extract insight. They will not be named specifically, but their help was invaluable.
 
-`Gracenote <http://www.gracenote.com/>`_ for encouraging the proliferation of open-source software.
+Thank you `Gracenote <http://www.gracenote.com/>`_ for encouraging the proliferation of open-source software.
 
 Tools used in rendering this package:
 

@@ -330,9 +330,9 @@ At this point, there should be a working API that will store raw 'health test' r
 API Endpoints for `HealthAlarm` Model
 -------------------------------------
 
-Setting up "Health Alarms" within Django Health Monitor are meant to identify alerts for issues that affect a certain portion of a system or population. Whenever a test result for an "asset" (e.g. a person, a server, a stock ticker, etc.) is written, the resulting write updates the asset's health state, health severity, and health history, which help to quickly identify issues that are affecting a portion of a system or population.
+Setting up "Health Alarms" within Django Health Monitor is meant to identify alerts for issues that affect a certain portion of a system or population. Whenever a test result for an "asset" (e.g. a person, a server, a stock ticker, etc.) is written, the resulting write updates the asset's health state, health severity, and health history, which help to quickly identify issues that are affecting a portion of a system or population.
 
-The following steps create an API that allow us to filter which assets within a system or population that exhibit failure conditions based off of four criteria - score, aggregate percent, repetition, and repetition percent - using an API with the following endpoints and actions:
+The following steps create an API that allow us to filter which assets within a system or population exhibit failure conditions based off of four criteria - score, aggregate percent, repetition, and repetition percent - using an API with the following endpoints and actions:
 
 - /health_alarm/
     - GET a list of all health alarm categories
@@ -341,6 +341,7 @@ The following steps create an API that allow us to filter which assets within a 
 
 Where:
 
+- <group> is the name of a group of tests.
 - <test> is the name of a health test.
 
 And query string arguments:
@@ -380,23 +381,23 @@ Let's illustrate this concept with an example. Let's say the following test resu
 
 Let's look at some example responses if we were to pass different query strings at different times:
 
-    - @t1: GET /health_alarm/heart/?score=2
+    - @t1: GET /health_alarm/doctor/heart/?score=2
         - returns `[3]`.
-    - @t1: GET /health_alarm/heart/?score=2&aggregate_percent=50
+    - @t1: GET /health_alarm/doctor/heart/?score=2&aggregate_percent=50
         - returns `[]` since only 1/3 assets exhibit a failure condition.
-    - @t3: GET /health_alarm/heart/?score=2&repetition=2
+    - @t3: GET /health_alarm/doctor/heart/?score=2&repetition=2
         - returns `[2, 3]` since @t2, the health score for `uid` 1 is 1 and is therefore in a pass state.
-    - @t5: GET /health_alarm/heart/?score=2&repetition=3&repetition_percent=25
+    - @t5: GET /health_alarm/doctor/heart/?score=2&repetition=3&repetition_percent=25
         - returns `[1, 2, 3]` since all three assets have a failure rate higher than 25% from t3 to t5.
-    - @t5: GET /health_alarm/heart/?score=2&repetition=3
+    - @t5: GET /health_alarm/doctor/heart/?score=2&repetition=3
         - returns `[2]`
 
-These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetition_percent` are meant to help make tests less sensitive to small system-wide failures (raising `aggregate_percent`), less sensitive to failure "blips" that automatically correct themselves (increasing `repetition`), more sensitive to failures within a sequence of tests (lowering `repetition_percent`), etc.
+These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetition_percent` - are meant to help make tests less sensitive to small system-wide failures (raising `aggregate_percent`), less sensitive to failure "blips" that automatically correct themselves (increasing `repetition`), more sensitive to failures within a sequence of tests (lowering `repetition_percent`), etc.
 
 Configure `HealthAlarm` Model
 -----------------------------
 
-Now that we have discussed the general overview of how alarms work, and you are interested in setting them up, read on! In order to enable health alarms, a derived `HealthAlarm` model will need to be defined, which will point related methods to the derived `Health` model defined above. For our example, we will use the `BodyHealth` model defined earlier and call the new derived `HealthAlarm` model `BodyHealthAlarm`.
+Now that we have discussed the general overview of how alarms work, if you are interested in setting them up, read on! In order to enable health alarms, a derived `HealthAlarm` model will need to be defined, which will point to the derived `Health` model defined above. For our example, we will use the `BodyHealth` model defined earlier and call the new derived `HealthAlarm` model `BodyHealthAlarm`.
 
     health/models.py::
 
