@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 
 from ..models import BodyHealthAlarm, BodyHealth, HeartHealthTest
@@ -107,55 +109,60 @@ class HealthAlarmModelIntegrationTestCase(TestCase):
         self.assertEqual([1, 2, 3], BodyHealth.objects.get(uid=3).history['heart'])
 
 
-# class HealthAlarmAPIIntegrationTestCase(TestCase):
-#     def setUp(self):
-#         """Set up the following test results and resulting health scores
-#
-#            t1   t2   t3   t4   t5
-#         1: 61,  63,  81,  69,  62
-#         2: 65,  94,  115, 112, 110
-#         3: 119, 110, 111,  94, 59
-#
-#           t1 t2 t3 t4 t5
-#         1: 1, 1, 2, 1, 1
-#         2: 1, 2, 3, 3, 3
-#         3: 3, 3, 3, 2, 1
-#         """
-#         # t1
-#         self.client.post('/health_test/heart/1/', {'heartrate': 61})
-#         self.client.post('/health_test/heart/2/', {'heartrate': 65})
-#         self.client.post('/health_test/heart/3/', {'heartrate': 119})
-#         # t2
-#         self.client.post('/health_test/heart/1/', {'heartrate': 63})
-#         self.client.post('/health_test/heart/2/', {'heartrate': 94})
-#         self.client.post('/health_test/heart/3/', {'heartrate': 110})
-#         # t3
-#         self.client.post('/health_test/heart/1/', {'heartrate': 81})
-#         self.client.post('/health_test/heart/2/', {'heartrate': 115})
-#         self.client.post('/health_test/heart/3/', {'heartrate': 111})
-#         # t4
-#         self.client.post('/health_test/heart/1/', {'heartrate': 69})
-#         self.client.post('/health_test/heart/2/', {'heartrate': 112})
-#         self.client.post('/health_test/heart/3/', {'heartrate': 94})
-#         # t5
-#         self.client.post('/health_test/heart/1/', {'heartrate': 62})
-#         self.client.post('/health_test/heart/2/', {'heartrate': 110})
-#         self.client.post('/health_test/heart/3/', {'heartrate': 59})
-#
-#     def test_get_health_alarm(self):
-#         response = self.client.get('/health_alarm/')
-#         content = json.loads(response.content.decode())
-#         self.assertEqual({'heart', 'sleep'}, set(content))
-#
-#     def test_get_health_alarm_test(self):
-#         response = self.client.get('/health_alarm/heart/?score=3')
-#         content = json.loads(response.content.decode())
-#         self.assertEqual({3}, set(content))
-#
-#         response = self.client.get('/health_alarm/heart/?score=2&repetition=3&repetition_percent=25')
-#         content = json.loads(response.content.decode())
-#         self.assertEqual({1, 2, 3}, set(content))
-#
-#         response = self.client.get('/health_alarm/heart/?score=2&repetition=3')
-#         content = json.loads(response.content.decode())
-#         self.assertEqual({2}, set(content))
+class HealthAlarmAPIIntegrationTestCase(TestCase):
+    def setUp(self):
+        """Set up the following test results and resulting health scores
+
+           t1   t2   t3   t4   t5
+        1: 61,  63,  81,  69,  62
+        2: 65,  94,  115, 112, 110
+        3: 119, 110, 111,  94, 59
+
+          t1 t2 t3 t4 t5
+        1: 1, 1, 2, 1, 1
+        2: 1, 2, 3, 3, 3
+        3: 3, 3, 3, 2, 1
+        """
+        # t1
+        self.client.post('/health_test/heart/1/', {'heartrate': 61})
+        self.client.post('/health_test/heart/2/', {'heartrate': 65})
+        self.client.post('/health_test/heart/3/', {'heartrate': 119})
+        # t2
+        self.client.post('/health_test/heart/1/', {'heartrate': 63})
+        self.client.post('/health_test/heart/2/', {'heartrate': 94})
+        self.client.post('/health_test/heart/3/', {'heartrate': 110})
+        # t3
+        self.client.post('/health_test/heart/1/', {'heartrate': 81})
+        self.client.post('/health_test/heart/2/', {'heartrate': 115})
+        self.client.post('/health_test/heart/3/', {'heartrate': 111})
+        # t4
+        self.client.post('/health_test/heart/1/', {'heartrate': 69})
+        self.client.post('/health_test/heart/2/', {'heartrate': 112})
+        self.client.post('/health_test/heart/3/', {'heartrate': 94})
+        # t5
+        self.client.post('/health_test/heart/1/', {'heartrate': 62})
+        self.client.post('/health_test/heart/2/', {'heartrate': 110})
+        self.client.post('/health_test/heart/3/', {'heartrate': 59})
+
+    def test_get_health_alarm_groups(self):
+        response = self.client.get('/health_alarm/')
+        content = json.loads(response.content.decode())
+        self.assertEqual({"message": "group required"}, content)
+
+    def test_get_health_alarm_group_tests(self):
+        response = self.client.get('/health_alarm/doctor/')
+        content = json.loads(response.content.decode())
+        self.assertEqual({'heart', 'sleep'}, set(content['tests']))
+
+    def test_get_health_alarm_test(self):
+        response = self.client.get('/health_alarm/doctor/heart/?score=3')
+        content = json.loads(response.content.decode())
+        self.assertEqual({2}, set(content))
+
+        response = self.client.get('/health_alarm/doctor/heart/?score=2&repetition=3&repetition_percent=25')
+        content = json.loads(response.content.decode())
+        self.assertEqual({1, 2, 3}, set(content))
+
+        response = self.client.get('/health_alarm/doctor/heart/?score=2&repetition=3')
+        content = json.loads(response.content.decode())
+        self.assertEqual({2}, set(content))

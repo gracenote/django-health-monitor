@@ -334,7 +334,7 @@ The following steps create an API with the following endpoints and actions:
 
 - /health_alarm/
     - GET a list of all health alarm categories
-- /health_alarm/<test>/?score=<score>&aggregate_percent=<aggregate_percent>&repetition=<repetition>&repetition_percent=<repetition_percent>
+- /health_alarm/<group>/<test>/?score=<score>&aggregate_percent=<aggregate_percent>&repetition=<repetition>&repetition_percent=<repetition_percent>
     - GET a health alarm for a particular test (calculate whether or not an alarm condition exists and return `uids` in failure state)
 
 Where:
@@ -394,7 +394,7 @@ These four "levers" - `score`, `aggregate_percent`, `repetition`, and `repetitio
 Configure `HealthAlarm` Model
 -----------------------------
 
-In order to enable health alarms, a derived `HealthAlarm` model will need to be defined, which will point related methods to the derviced `Health` model defined above. For our example, we will use the `BodyHealth` model defined earlier and call the new derived `HealthAlarm` model `BodyHealthAlarm`.
+Now that we have discussed the general overview of how alarms work, and you are interested in setting them up, read on! In order to enable health alarms, a derived `HealthAlarm` model will need to be defined, which will point related methods to the derived `Health` model defined above. For our example, we will use the `BodyHealth` model defined earlier and call the new derived `HealthAlarm` model `BodyHealthAlarm`.
 
     health/models.py::
 
@@ -404,13 +404,13 @@ In order to enable health alarms, a derived `HealthAlarm` model will need to be 
         class BodyHealthAlarm(HealthAlarm):
             health_model = BodyHealth
 
-If following the above example, the new `models.py` file will look like the following with the `HealthTest` model details omitted.
+If following the example from previous sections, the new `models.py` file will look similar to the following with the `HealthTest` model details omitted.
 
     health/models.py::
 
         from django.db import models
 
-        from health_monitor.models import Health, HealthTest, HealthAlarm
+        from health_monitor.models import Health, HealthAlarm, HealthTest
 
 
         class BodyHealth(Health):
@@ -427,4 +427,74 @@ If following the above example, the new `models.py` file will look like the foll
 
         class SleepHealthTest(HealthTest):
             ...
-    
+
+Configure `HealthAlarmView` View
+--------------------------------
+
+In order to configure the view, which will later be referenced by the API configuration in the next section, we will simply set up the following making sure to set the `health_alarm_model` to point to `BodyHealthAlarm`, which was defined in the previous section.
+
+    health/views.py::
+
+        from health_monitor.views import HealthAlarmView
+
+        class BodyHealthAlarmView(HealthAlarmView):
+            health_alarm_model = BodyHealthAlarm
+
+In totality, the views we have defined in this example should look like the following.
+
+    health/views::
+
+        from health_monitor.views import HealthTestView, HealthAlarmView, HealthView
+
+        from .models import BodyHealth, BodyHealthAlarm
+
+
+        class BodyHealthView(HealthView):
+            health_model = BodyHealth**
+
+
+        class BodyHealthAlarmView(HealthAlarmView):
+            health_alarm_model = BodyHealthAlarm
+
+        class BodyHealthTestView(HealthTestView):
+            pass
+
+Configure `HealthAlarm` API Endpoints
+-------------------------------------
+
+Finally, we can create urls to point to the `HealthAlarmView` created in the previous section.
+
+    health/urls.py::
+
+        from django.conf.urls import url
+
+        from . import views
+
+
+        urlpatterns = [
+            url(r'^health_alarm/$', views.BodyHealthAlarmView.as_view()),
+            url(r'^health_alarm/(?P<group>[\w]*)/$', views.BodyHealthAlarmView.as_view()),
+            url(r'^health_alarm/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthAlarmView.as_view()),
+        ]
+
+And if you have been following along from the beginning, all of the API end points for health, health_test, and health_alarm actions are as follows.
+
+    health/urls.py::
+
+        from django.conf.urls import url
+
+        from . import views
+
+
+        urlpatterns = [
+            url(r'^health/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\d]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
+            url(r'^health_test/$', views.BodyHealthTestView.as_view()),
+            url(r'^health_test/(?P<test>[\w]*)/$', views.BodyHealthTestView.as_view()),
+            url(r'^health_test/(?P<test>[\w]*)/(?P<uid>[\d]*)/$', views.BodyHealthTestView.as_view()),
+            url(r'^health_alarm/$', views.BodyHealthAlarmView.as_view()),
+            url(r'^health_alarm/(?P<group>[\w]*)/$', views.BodyHealthAlarmView.as_view()),
+            url(r'^health_alarm/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthAlarmView.as_view()),
+        ]

@@ -98,7 +98,10 @@ class Health(models.Model):
 
     def get_history(self, test, repetition):
         """Return the cached x test scores or retrieve from historical records where x is the number of repetitions."""
-        if not len(self.history[test]) >= repetition:
+        try:
+            if not len(self.history[test]) >= repetition:
+                raise Exception
+        except Exception:
             self.history[test] = self.get_latest_scores(test, repetition)
             self.save()
         return self.history[test][0:repetition]
@@ -120,7 +123,7 @@ class HealthAlarm(object):
         return healths
 
     @classmethod
-    def calculate_alarms(cls, group, test, score, aggregate_percent=0, repetition=1, repetition_percent=100):
+    def calculate_alarms(cls, group, test, score, aggregate_percent=0, repetition=1, repetition_percent=100, **kwargs):
         """Return a list of asset uids based off of filtering criteria.
 
         Arguments:

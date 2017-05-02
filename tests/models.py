@@ -1,6 +1,6 @@
 from django.db import models
 
-from health_monitor.models import Health, HealthTest, HealthAlarm
+from health_monitor.models import Health, HealthAlarm, HealthTest
 
 
 class BodyHealth(Health):

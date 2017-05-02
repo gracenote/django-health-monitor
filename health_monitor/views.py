@@ -28,7 +28,7 @@ from .models import HealthTest
 
 class HealthView(View):
     def get(self, request, uid=None, group=None, test=None):
-        """Get health by uid."""
+        """Get health by uid, group, and/or test."""
         status_code = 200
         if not test and not group and not uid:
             response_data = {
@@ -60,7 +60,7 @@ class HealthView(View):
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     def delete(self, request, uid=None, group=None, test=None):
-        """Delete health by uid."""
+        """Delete health by uid, group, and/or test."""
         status_code = 200
         try:
             if not test and not group:
@@ -83,6 +83,29 @@ class HealthView(View):
                 'message': str(e)
             }
             status_code = 400
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+
+
+class HealthAlarmView(View):
+    def get(self, request, group=None, test=None):
+        status_code = 200
+        try:
+            if not group:
+                raise Exception('group required')
+            elif not test:
+                response_data = {'tests': HealthTest._get_tests(group)}
+            else:
+                kwargs = {}
+                for k in ['score', 'aggregate_percent', 'repetition', 'repetition_percent']:
+                    if k in request.GET.keys():
+                        kwargs[k] = int(request.GET[k])
+                response_data = self.health_alarm_model.calculate_alarms(group=group, test=test, **kwargs)
+        except Exception as e:
+                response_data = {
+                    'message': str(e)
+                }
+                status_code = 400
+
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
 
