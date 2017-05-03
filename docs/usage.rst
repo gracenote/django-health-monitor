@@ -453,7 +453,7 @@ In totality, the views we have defined in this example should look like the foll
 
 
         class BodyHealthView(HealthView):
-            health_model = BodyHealth**
+            health_model = BodyHealth
 
 
         class BodyHealthAlarmView(HealthAlarmView):
