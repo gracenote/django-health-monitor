@@ -241,7 +241,7 @@ At this point, there should be a working API that will store raw 'health test' r
         Out[7]: {u'message': u'heart score changed to 2 for uid 1', u'score': 2}
         In [8]: r = requests.get('http://localhost:8000/health_test/heart/1/')
         In [9]: r.json()
-        Out[9]: [{u'heartrate': 90, u'time': u'2017-04-27T20:47:34.594848+00:00', u'uid': 1}]
+        Out[9]: [{u'heartrate': 90, u'score': 2, u'time': u'2017-04-27T20:47:34.594848+00:00', u'uid': 1}]
         In [10]: r = requests.get('http://localhost:8000/health/')
         In [11]: r.json()
         Out[11]: {u'uids': [1]}
