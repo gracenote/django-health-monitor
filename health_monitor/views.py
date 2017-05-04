@@ -134,6 +134,7 @@ class HealthTestView(View):
                     entry = {}
                     for field in fields:
                         entry[field] = utils.datetime_to_iso(getattr(result, field))
+                        entry['score'] = result.get_score()
                     response_data.append(entry)
         except Exception as e:
                 response_data = {
