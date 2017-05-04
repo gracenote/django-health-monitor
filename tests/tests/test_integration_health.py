@@ -186,7 +186,7 @@ class HealthIntegrationTestCase(TestCase):
         """GET test score for a particular test and uid - /health_test/<test>/<uid>/"""
         self.client.post('/health_test/heart/123456789/', {'heartrate': 100})
         response = self.client.get('/health_test/heart/123456789/')
-        self.assertEqual(response.json()[0]['score'], 2)
+        self.assertEqual(json.loads(response.content)[0]['score'], 2)
 
     def test_post_health_test_wrong_test_name(self):
         response = self.client.post('/health_test/breath/123456789/', {'heartrate': 60})
