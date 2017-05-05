@@ -198,25 +198,29 @@ class HealthIntegrationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_post_boolean(self):
-        self.client.post('/health_test/smoke/123456789/', {'smokes': 1})
+        response = self.client.post('/health_test/smoke/123456789/', {'smokes': 1})
+        self.assertContains(response, 'changed to 3')
         response = self.client.get('/health/123456789/')
         self.assertEqual(3, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
         response = self.client.get('/health_test/smoke/123456789/')
         self.assertEqual(3, json.loads(response.content.decode())[-1]['score'])
 
-        self.client.post('/health_test/smoke/123456789/', {'smokes': True})
+        response = self.client.post('/health_test/smoke/123456789/', {'smokes': True})
+        self.assertContains(response, 'changed to 3')
         response = self.client.get('/health/123456789/')
         self.assertEqual(3, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
         response = self.client.get('/health_test/smoke/123456789/')
         self.assertEqual(3, json.loads(response.content.decode())[-1]['score'])
 
-        self.client.post('/health_test/smoke/123456789/', {'smokes': 0})
+        response = self.client.post('/health_test/smoke/123456789/', {'smokes': 0})
+        self.assertContains(response, 'changed to 1')
         response = self.client.get('/health/123456789/')
         self.assertEqual(1, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
         response = self.client.get('/health_test/smoke/123456789/')
         self.assertEqual(1, json.loads(response.content.decode())[-1]['score'])
 
-        self.client.post('/health_test/smoke/123456789/', {'smokes': False})
+        response = self.client.post('/health_test/smoke/123456789/', {'smokes': False})
+        self.assertContains(response, 'changed to 1')
         response = self.client.get('/health/123456789/')
         self.assertEqual(1, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
         response = self.client.get('/health_test/smoke/123456789/')

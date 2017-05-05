@@ -162,7 +162,7 @@ class HealthTestView(View):
             status_code = 400
             return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
-        score = result.score(**kwargs)
+        score = result.get_score()
         response_data['score'] = score
         response_data['message'] = '{} score changed to {} for uid {}'.format(test, score, uid)
 
