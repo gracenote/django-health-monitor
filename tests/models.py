@@ -49,3 +49,19 @@ class SleepHealthTest(HealthTest):
             return 2
         else:
             return 1
+
+
+class SmokeHealthTest(HealthTest):
+    smokes = models.BooleanField(default=0)
+
+    health_model = BodyHealth
+    groups = ['doctor']
+    test = 'smoke'
+
+    @staticmethod
+    def score(smokes, **kwargs):
+        smokes = bool(smokes)
+        if smokes:
+            return 3
+        else:
+            return 1

@@ -196,3 +196,28 @@ class HealthIntegrationTestCase(TestCase):
     def test_post_health_test_wrong_param(self):
         response = self.client.post('/health_test/heart/123456789/', {'breath': 1})
         self.assertEqual(response.status_code, 400)
+
+    def test_post_boolean(self):
+        self.client.post('/health_test/smoke/123456789/', {'smokes': 1})
+        response = self.client.get('/health/123456789/')
+        self.assertEqual(3, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
+        response = self.client.get('/health_test/smoke/123456789/')
+        self.assertEqual(3, json.loads(response.content.decode())[-1]['score'])
+
+        self.client.post('/health_test/smoke/123456789/', {'smokes': True})
+        response = self.client.get('/health/123456789/')
+        self.assertEqual(3, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
+        response = self.client.get('/health_test/smoke/123456789/')
+        self.assertEqual(3, json.loads(response.content.decode())[-1]['score'])
+
+        self.client.post('/health_test/smoke/123456789/', {'smokes': 0})
+        response = self.client.get('/health/123456789/')
+        self.assertEqual(1, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
+        response = self.client.get('/health_test/smoke/123456789/')
+        self.assertEqual(1, json.loads(response.content.decode())[-1]['score'])
+
+        self.client.post('/health_test/smoke/123456789/', {'smokes': False})
+        response = self.client.get('/health/123456789/')
+        self.assertEqual(1, json.loads(response.content.decode())['state']['doctor']['smoke']['score'])
+        response = self.client.get('/health_test/smoke/123456789/')
+        self.assertEqual(1, json.loads(response.content.decode())[-1]['score'])

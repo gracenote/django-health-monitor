@@ -152,7 +152,8 @@ class HealthAlarmAPIIntegrationTestCase(TestCase):
     def test_get_health_alarm_group_tests(self):
         response = self.client.get('/health_alarm/doctor/')
         content = json.loads(response.content.decode())
-        self.assertEqual({'heart', 'sleep'}, set(content['tests']))
+        self.assertTrue('heart' in content['tests'])
+        self.assertTrue('sleep' in content['tests'])
 
     def test_get_health_alarm_test(self):
         response = self.client.get('/health_alarm/doctor/heart/?score=3')
