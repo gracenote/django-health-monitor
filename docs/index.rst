@@ -1,15 +1,14 @@
-.. complexity documentation master file, created by
-   sphinx-quickstart on Tue Jul  9 22:26:36 2013.
+.. Django Health Monitor documentation master file, created by
+   sphinx-quickstart on Tue May  2 11:09:25 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 Welcome to Django Health Monitor's documentation!
-=================================================================
-
-Contents:
+=================================================
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 
    readme
    installation
@@ -17,3 +16,12 @@ Contents:
    contributing
    authors
    history
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
