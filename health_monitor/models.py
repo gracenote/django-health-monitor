@@ -170,6 +170,11 @@ class HealthTest(models.Model):
 
     @classmethod
     def __clean_str_to_bool(cls, **kwargs):
+        """Returns kwargs where any BooleanField is type converted to a bool.
+
+        This issue is caused by request.POST returning '0' for 0, 'False' for False, etc.,
+        which ends up getting written to the database as a 1 if not type converted.
+        """
         for k, v in kwargs.items():
             if k in [x.attname for x in cls._meta.fields]:
                 if cls._meta.get_field(k).get_internal_type() == 'BooleanField':
