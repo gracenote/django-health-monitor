@@ -156,6 +156,7 @@ class HealthTestView(View):
         # calculate health score: red, orange, yellow, green
         try:
             model = HealthTest._get_model(test)
+            kwargs = utils.clean_str_to_bool(model, **kwargs)
             result = model.create(uid=uid, **kwargs)
         except Exception as e:
             response_data['message'] = str(e)

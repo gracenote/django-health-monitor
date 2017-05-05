@@ -1,6 +1,7 @@
 from collections import deque
 import datetime
 import dateutil.parser
+import distutils
 import pytz
 
 from django.utils import timezone
@@ -62,3 +63,19 @@ def push_pop_deque(e, l):
     o.appendleft(e)
     o.pop()
     return list(o)
+
+
+def clean_str_to_bool(cls, **kwargs):
+    """Returns kwargs where any BooleanField is type converted to a bool.
+
+    This issue is caused by request.POST returning '0' for 0, 'False' for False, etc.,
+    which ends up getting written to the database as a 1 if not type converted.
+    """
+    for k, v in kwargs.items():
+        if k in [x.attname for x in cls._meta.fields]:
+            if cls._meta.get_field(k).get_internal_type() == 'BooleanField':
+                try:
+                    kwargs[k] = distutils.util.strtobool(v)
+                except Exception:
+                    pass
+    return kwargs
