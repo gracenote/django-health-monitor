@@ -1,7 +1,7 @@
 from collections import deque
 import datetime
 import dateutil.parser
-import distutils
+import distutils.util
 import pytz
 
 from django.utils import timezone
@@ -76,6 +76,6 @@ def clean_str_to_bool(cls, **kwargs):
             if cls._meta.get_field(k).get_internal_type() == 'BooleanField':
                 try:
                     kwargs[k] = distutils.util.strtobool(v)
-                except Exception:
-                    pass
+                except Exception as e:
+                    raise RuntimeError("BooleanField not type converted in health_monitor/utils.py - {}".format(e))
     return kwargs
