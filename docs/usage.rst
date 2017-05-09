@@ -114,7 +114,13 @@ API Endpoints for `Health` and `HealthTest` Models
 
 The following steps create an API with the following endpoints and actions:
 
+**health**
+
 .. include:: api/health.rst
+
+**health_test**
+
+.. include:: api/health_test.rst
 
 Configure `HealthView` and `HealthTestView` Views
 -------------------------------------------------
@@ -301,6 +307,8 @@ API Endpoints for `HealthAlarm` Model
 Setting up "Health Alarms" within Django Health Monitor is meant to identify alerts for issues that affect a certain portion of a system or population. Whenever a test result for an "asset" (e.g. a person, a server, a stock ticker, etc.) is written, the resulting write updates the asset's health state, health severity, and health history, which help to quickly identify issues that are affecting a portion of a system or population.
 
 The following steps create an API that allow us to filter which assets within a system or population exhibit failure conditions based off of four criteria - score, aggregate percent, repetition, and repetition percent - using an API with the following endpoints and actions:
+
+**health_alarm**
 
 .. include:: api/health_alarm.rst
 
