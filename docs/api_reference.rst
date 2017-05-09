@@ -2,7 +2,7 @@
 API Reference
 #############
 
-This is a quick reference to API endpoints that are available after configuring Django Health Monitor in a Django project. For a full explanation of configuring and using Django Health Monitor, see `Usage <usage.rst>`_.
+This is a quick reference to API endpoints that are available after configuring Django Health Monitor in a Django project. For a full explanation of configuring and using Django Health Monitor, see `Usage <usage.html>`_.
 
 ******
 Health
