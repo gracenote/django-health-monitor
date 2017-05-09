@@ -14,6 +14,7 @@
    limitations under the License.
 """
 
+import distutils.util
 import json
 
 from django.http import HttpResponse
@@ -129,8 +130,12 @@ class HealthTestView(View):
                     kwargs['end_time'] = utils.iso_to_datetime(request.GET['end_time'])
 
                 response_data = []
+                results = model.get_history(**kwargs)
+                if 'latest' in request.GET and results:
+                    latest = distutils.util.strtobool(request.GET['latest'])
+                    results = [results.order_by('time').last()] if latest else model.get_history(**kwargs)
                 fields = [x.name for x in model._meta.fields if x.name != 'id']
-                for result in model.get_history(**kwargs):
+                for result in results:
                     entry = {}
                     for field in fields:
                         entry[field] = utils.datetime_to_iso(getattr(result, field))

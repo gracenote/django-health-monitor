@@ -183,11 +183,37 @@ class HealthIntegrationTestCase(TestCase):
         response = self.client.get('/health/123456789/')
         self.assertEqual(response.status_code, 200)
 
-    def tests_get_health_test_score(self):
+    def test_get_health_test_score(self):
         """GET test score for a particular test and uid - /health_test/<test>/<uid>/"""
         self.client.post('/health_test/heart/123456789/', {'heartrate': 100})
         response = self.client.get('/health_test/heart/123456789/')
         self.assertEqual(content_to_json(response.content)[0]['score'], 2)
+
+    def test_get_latest_health_test(self):
+        """GET latest test result for a particular test and uid - /health_test/<test>/<uid>/?latest=1"""
+        SleepHealthTest.create(uid=1, hours=8)
+        SleepHealthTest.create(uid=1, hours=6)
+        time_1 = utils.datetime_to_iso(timezone.now())
+        SleepHealthTest.create(uid=1, hours=4)
+        SleepHealthTest.create(uid=1, hours=2)
+
+        response = self.client.get('/health_test/sleep/1/?latest=1')
+        content = content_to_json(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['score'], 4)
+
+        response = self.client.get('/health_test/sleep/1/?end_time={}&latest=true'.format(time_1))
+        content = content_to_json(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['score'], 2)
+
+        response = self.client.get('/health_test/sleep/1/?start_time={}&end_time={}&latest=1'.format(time_1, time_1))
+        content = content_to_json(response.content)
+        self.assertEqual(len(content), 0)
+
+        response = self.client.get('/health_test/sleep/1/?latest=false')
+        content = content_to_json(response.content)
+        self.assertEqual(len(content), 4)
 
     def test_post_health_test_wrong_test_name(self):
         response = self.client.post('/health_test/breath/123456789/', {'heartrate': 60})
