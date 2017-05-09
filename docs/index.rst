@@ -12,6 +12,7 @@ Welcome to Django Health Monitor's documentation!
 
    readme
    installation
+   api_reference
    usage
    contributing
    authors
