@@ -1,5 +1,5 @@
-- /health_alarm/
-    - GET a list of all health alarm categories
+- /health_alarm/<group>/
+    - GET a list of all health tests for a particular group
 - /health_alarm/<group>/<test>/?score=<score>&aggregate_percent=<aggregate_percent>&repetition=<repetition>&repetition_percent=<repetition_percent>
     - GET a health alarm for a particular test (calculate whether or not an alarm condition exists and return `uids` in failure state)
 
