@@ -7,14 +7,14 @@
 - /health_test/<test>/<uid>/
     - POST test results of a particular test and uid
 
-    Where:
+Where:
 
-    - <uid> is a unique identifier of an asset.
-    - <test> is the name of a health test.
+- <uid> is a unique identifier of an asset.
+- <test> is the name of a health test.
 
-    And query string arguments:
+And query string arguments:
 
-    - <uids> - is a comma separated list of uids.
-    - <start_time> - is a datetime string in ISO 8601 format (optional).
-    - <end_time> - is a datetime string in  ISO 8601 format (optional).
-    - example: /health_test/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
+- <uids> - is a comma separated list of uids.
+- <start_time> - is a datetime string in ISO 8601 format (optional).
+- <end_time> - is a datetime string in  ISO 8601 format (optional).
+- example: /health_test/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
