@@ -114,39 +114,7 @@ API Endpoints for `Health` and `HealthTest` Models
 
 The following steps create an API with the following endpoints and actions:
 
-- /health/
-    - GET a list of all health uids
-- /health/<uid>/
-    - GET the health of a particular uid
-    - DELETE the health of a particular uid
-- /health/<uid>/<group>/
-    - GET the health of a particular uid and group
-    - DELETE health of a particular uid and group
-- /health/<uid>/<group>/<test>/
-    - GET the health of a particular uid and group and test
-    - DELETE the health of a particular uid and group and test
-- /health_test/
-    - GET a list of all health tests
-- /health_tests/<test>/?uids=<uids>&start_time=<start_time>&end_time=<end_time>
-    - GET test results of a particular test with filters
-- /health_test/<test>/<uid>/?start_time=<start_time>&end_time=<end_time>
-    - GET test results of a particular test and uid with filters
-- /health_test/<test>/<uid>/
-    - POST test results of a particular test and uid
-
-
-Where:
-
-- <uid> is a unique identifier of an asset.
-- <group> is the name of a group of tests.
-- <test> is the name of a health test.
-
-And query string arguments:
-
-- <uids> - is a comma separated list of uids.
-- <start_time> - is a datetime string in ISO 8601 format (optional).
-- <end_time> - is a datetime string in  ISO 8601 format (optional).
-- example: /health/heart/?uids=1,2,3&start_time=xxx&end_time=xxx
+.. include:: api/health.rst
 
 Configure `HealthView` and `HealthTestView` Views
 -------------------------------------------------
@@ -334,22 +302,7 @@ Setting up "Health Alarms" within Django Health Monitor is meant to identify ale
 
 The following steps create an API that allow us to filter which assets within a system or population exhibit failure conditions based off of four criteria - score, aggregate percent, repetition, and repetition percent - using an API with the following endpoints and actions:
 
-- /health_alarm/
-    - GET a list of all health alarm categories
-- /health_alarm/<group>/<test>/?score=<score>&aggregate_percent=<aggregate_percent>&repetition=<repetition>&repetition_percent=<repetition_percent>
-    - GET a health alarm for a particular test (calculate whether or not an alarm condition exists and return `uids` in failure state)
-
-Where:
-
-- <group> is the name of a group of tests.
-- <test> is the name of a health test.
-
-And query string arguments:
-
-- <score> - is the minimum `score` needed to trigger a failure.
-- <aggregate_percent> - is the minimum `percent` of total assets in a failure state needed to trigger an alarm (optional). This is by default 0.
-- <repetition> - is the minimum number of successive test results in a failure state needed to trigger an alarm (optional). This is by default 1.
-- <repetition_percent> - is the minimum percent within the prior defined repetition in a failure state needed to trigger an alarm (optional). This is by default 100.
+.. include:: api/health_alarm.rst
 
 Let's illustrate this concept with an example. Let's say the following test results have been recorded for assets with <uids> of 1, 2, and 3 at times t1, t2, t3, t4, and t5.
 
