@@ -104,6 +104,7 @@ Additionally, a static method for `score` is used to interpret raw test result v
     - The definition of score must include an input for `**kwargs`.
     - The inputs for the `score` method should be type-converted to the correct type (int, float, char, etc.) to clean data that is passed incorrectly.
     - The `score` method also must return an integer score otherwise it will fail.
+    - Additional attributes may be added to HealthTest models to store values that are not used in current score calculations, but may be used for score calculations at a later time.
 
 ****************
 2. Configure API
@@ -218,7 +219,7 @@ At this point, there should be a working API that will store raw 'health test' r
         Out[9]: [{u'heartrate': 90, u'score': 2, u'time': u'2017-04-27T20:47:34.594848+00:00', u'uid': 1}]
         In [10]: r = requests.get('http://localhost:8000/health/')
         In [11]: r.json()
-        Out[11]: {u'uids': [1]}
+        Out[11]: [1]
         In [12]: r = requests.get('http://localhost:8000/health/1/')
         In [13]: r.json()
         Out[13]:
