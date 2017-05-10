@@ -16,9 +16,23 @@ class HealthIntegrationTestCase(TestCase):
         self.client.post('/health_test/heart/3/', {'heartrate': 60})
         response = self.client.get('/health/')
         content = json.loads(response.content.decode())
-        self.assertTrue(1 in content['uids'])
-        self.assertTrue(2 in content['uids'])
-        self.assertTrue(3 in content['uids'])
+        self.assertEqual({1, 2, 3}, set(content))
+
+    def test_get_health_snapshot(self):
+        """GET a list of all health uids - /health/"""
+        self.client.post('/health_test/heart/1/', {'heartrate': 60})
+        self.client.post('/health_test/heart/2/', {'heartrate': 90})
+        self.client.post('/health_test/heart/3/', {'heartrate': 130})
+
+        response = self.client.get('/health/')
+        content = json.loads(response.content.decode())
+        self.assertEqual({1, 2, 3}, set(content))
+
+        response = self.client.get('/health/?detail=1')
+        content = json.loads(response.content.decode())
+        self.assertEqual({1, 2, 3}, set([x['uid'] for x in content]))
+        for health in content:
+            self.assertEqual({'uid', 'state', 'severity'}, set(health.keys()))
 
     def test_get_health_uid(self):
         """GET the health of a particular uid - /health/<uid>/"""
@@ -41,13 +55,13 @@ class HealthIntegrationTestCase(TestCase):
         # check 123456789 is in list of uids
         response = self.client.get('/health/')
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(123456789 in json.loads(response.content.decode())['uids'])
+        self.assertTrue(123456789 in json.loads(response.content.decode()))
 
         # delete 123456789
         response = self.client.delete('/health/123456789/')
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/health/')
-        self.assertTrue(123456789 not in json.loads(response.content.decode())['uids'])
+        self.assertTrue(123456789 not in json.loads(response.content.decode()))
 
         # delete nonexistent asset
         response = self.client.get('/health/123456789/')

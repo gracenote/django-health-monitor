@@ -32,9 +32,12 @@ class HealthView(View):
         """Get health by uid, group, and/or test."""
         status_code = 200
         if not test and not group and not uid:
-            response_data = {
-                'uids': [x.uid for x in self.health_model.objects.all()],
-            }
+            detail = distutils.util.strtobool(request.GET['detail']) if 'detail' in request.GET.keys() else False
+            healths = self.health_model.objects.all()
+            if detail:
+                response_data = [{'uid': x.uid, 'state': x.state, 'severity': x.severity} for x in healths]
+            else:
+                response_data = [x.uid for x in healths]
         else:
             try:
                 health = self.health_model.objects.get(uid=uid)
