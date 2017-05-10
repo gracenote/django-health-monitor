@@ -15,3 +15,7 @@ Where:
 - <uid> is a unique identifier of an asset.
 - <group> is the name of a group of tests.
 - <test> is the name of a health test.
+
+And query string arguments:
+
+- <detail> is a boolean value that if set to 1 or true will return a JSON response of uids as the keys and 'health state' and 'health severity' details as the corresponding values (optional). If not set, a list of uids will be returned.

@@ -10,7 +10,7 @@ Where:
 
 And query string arguments:
 
-- <score> - is the minimum `score` needed to trigger a failure.
-- <aggregate_percent> - is the minimum `percent` of total assets in a failure state needed to trigger an alarm (optional). This is by default 0.
-- <repetition> - is the minimum number of successive test results in a failure state needed to trigger an alarm (optional). This is by default 1.
-- <repetition_percent> - is the minimum percent within the prior defined repetition in a failure state needed to trigger an alarm (optional). This is by default 100.
+- <score> is the minimum `score` needed to trigger a failure.
+- <aggregate_percent> is the minimum `percent` of total assets in a failure state needed to trigger an alarm (optional). This is by default 0.
+- <repetition> is the minimum number of successive test results in a failure state needed to trigger an alarm (optional). This is by default 1.
+- <repetition_percent> is the minimum percent within the prior defined repetition in a failure state needed to trigger an alarm (optional). This is by default 100.
