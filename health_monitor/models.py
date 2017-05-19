@@ -137,7 +137,7 @@ class HealthAlarm(object):
         healths = cls._get_associated_healths(group, test)
 
         # step 1: filter failing assets by score, if repetition is less than 100%, all healths must be checked
-        if repetition == 100:
+        if repetition_percent == 100:
             failing_healths_by_score = [x for x in healths if x.state[group][test]['score'] >= score]
         else:
             failing_healths_by_score = healths
