@@ -211,9 +211,11 @@ class HealthTest(models.Model):
             return [t.test for t in HealthTest.__subclasses__()]
         return [t.test for t in HealthTest.__subclasses__() if group in t.groups]
 
-    @staticmethod
-    def _get_groups(test):
-        """Return a list of group names that a test belongs to."""
+    @classmethod
+    def _get_groups(cls, test=None):
+        """Return a list of group names that are associated with a test or all groups if no test is passed."""
+        if not test:
+            return utils.merge_to_uniques([x.groups for x in cls.__subclasses__()])
         for t in HealthTest.__subclasses__():
             if test == t.test:
                 return t.groups

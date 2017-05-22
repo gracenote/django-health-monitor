@@ -147,7 +147,7 @@ class HealthAlarmAPIIntegrationTestCase(TestCase):
     def test_get_health_alarm_groups(self):
         response = self.client.get('/health_alarm/')
         content = json.loads(response.content.decode())
-        self.assertEqual({"message": "group required"}, content)
+        self.assertEqual(set(['coach', 'doctor']), set(content['groups']))
 
     def test_get_health_alarm_group_tests(self):
         response = self.client.get('/health_alarm/doctor/')

@@ -95,7 +95,7 @@ class HealthAlarmView(View):
         status_code = 200
         try:
             if not group:
-                raise Exception('group required')
+                response_data = {'groups': HealthTest._get_groups()}
             elif not test:
                 response_data = {'tests': HealthTest._get_tests(group)}
             else:

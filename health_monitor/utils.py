@@ -2,6 +2,7 @@ from collections import deque
 import datetime
 import dateutil.parser
 import distutils.util
+import itertools
 import pytz
 
 from django.utils import timezone
@@ -79,3 +80,9 @@ def clean_str_to_bool(cls, **kwargs):
                 except Exception as e:
                     raise RuntimeError("BooleanField not type converted in health_monitor/utils.py - {}".format(e))
     return kwargs
+
+
+def merge_to_uniques(l):
+    """Returns a unique list of elements from a list of lists."""
+    combined = list(itertools.chain.from_iterable(l))
+    return list(set(combined))
