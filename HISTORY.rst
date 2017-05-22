@@ -3,6 +3,16 @@
 History
 -------
 
+0.2.6 (2017-05-22)
+++++++++++++++++++
+
+* Update docs.
+* Return ‘groups’ for API view /health_alarm/.
+* Fix logic to selectively scan repetition history for repetition_percent = 100.
+* Fix logic to selectively scan repetition history for repetition_percent = 100.
+* Update changelog history.
+* Update docs.
+
 0.2.5 (2017-05-10)
 ++++++++++++++++++
 
