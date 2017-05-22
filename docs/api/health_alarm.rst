@@ -1,3 +1,5 @@
+- /health_alarm/
+    - GET a list of all groups
 - /health_alarm/<group>/
     - GET a list of all health tests for a particular group
 - /health_alarm/<group>/<test>/?score=<score>&aggregate_percent=<aggregate_percent>&repetition=<repetition>&repetition_percent=<repetition_percent>
