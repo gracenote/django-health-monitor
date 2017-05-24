@@ -163,6 +163,18 @@ class HealthIntegrationTestCase(TestCase):
         content = json.loads(response.content.decode())
         self.assertEqual(1, len(content))
 
+        # Get results from /health_test/sleep/
+        time_3 = utils.datetime_to_iso(timezone.now())
+        SleepHealthTest.create(uid=2, hours=8)
+        SleepHealthTest.create(uid=2, hours=8)
+
+        response = self.client.get('/health_test/sleep/'.format(time_2))
+        content = json.loads(response.content.decode())
+        self.assertEqual(14, len(content))
+        response = self.client.get('/health_test/sleep/?uids=1,2,3&start_time={}'.format(time_3))
+        content = json.loads(response.content.decode())
+        self.assertEqual(2, len(content))
+
     def test_post_health_test(self):
         """POST test results for a particular test and uid - /health_test/<test>/<uid>/"""
         # change heart state and severity to 2

@@ -14,7 +14,7 @@ Where:
 
 And query string arguments:
 
-- <uids> is a comma-separated list of uids.
+- <uids> is a comma-separated list of uids (optional).
 - <start_time> is a datetime string in ISO 8601 format (optional).
 - <end_time> is a datetime string in  ISO 8601 format (optional).
 - <latest> is a boolean value that if set to 1 or true will return the latest result in combination with start_time and end_time if provided.

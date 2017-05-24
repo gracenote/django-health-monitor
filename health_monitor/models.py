@@ -194,7 +194,7 @@ class HealthTest(models.Model):
         return type(self).calculate_score(**kwargs)
 
     @classmethod
-    def get_history(cls, uids, start_time=timezone.datetime.min.replace(tzinfo=pytz.UTC), end_time=timezone.datetime.max.replace(tzinfo=pytz.UTC)):
+    def get_history(cls, uids=None, start_time=timezone.datetime.min.replace(tzinfo=pytz.UTC), end_time=timezone.datetime.max.replace(tzinfo=pytz.UTC)):
         """Returns historical test results.
 
         Arguments:
@@ -202,7 +202,10 @@ class HealthTest(models.Model):
         start_time -- a datetime object
         end_time   -- a datetime object
         """
-        return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
+        if uids:
+            return cls.objects.filter(uid__in=uids, **{'time__range': (start_time, end_time)})
+        else:
+            return cls.objects.filter(**{'time__range': (start_time, end_time)})
 
     @staticmethod
     def _get_tests(group=None):
