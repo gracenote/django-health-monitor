@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.7 (2017-05-24)
+++++++++++++++++++
+
+* Make ‘uids’ an optional parameter when getting test result history.
+
 0.2.6 (2017-05-22)
 ++++++++++++++++++
 
