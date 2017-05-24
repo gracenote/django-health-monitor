@@ -140,9 +140,9 @@ class HealthTestView(View):
                 fields = [x.name for x in model._meta.fields if x.name != 'id']
                 for result in results:
                     entry = {}
+                    entry['score'] = result.get_score()
                     for field in fields:
-                        entry[field] = utils.datetime_to_iso(getattr(result, field))
-                        entry['score'] = result.get_score()
+                        entry[field] = utils.datetime_to_iso(getattr(result, field)) if field == 'time' else getattr(result, field)
                     response_data.append(entry)
         except Exception as e:
                 response_data = {
