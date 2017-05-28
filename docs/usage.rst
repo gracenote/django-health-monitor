@@ -19,6 +19,8 @@ The application can be created with the command::
 
     django-admin startapp health
 
+Make sure to add ``'health'`` to ``INSTALLED_APPS`` in ``settings.py`` if you are following along with this example.
+
 `Health`
 --------
 
