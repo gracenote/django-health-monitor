@@ -44,6 +44,13 @@ class Health(models.Model):
 
         return max(test_scores)
 
+    @classmethod
+    def get_or_create(cls, *args, **kwargs):
+        try:
+            return cls.objects.get(**kwargs)
+        except Exception:
+            return cls.objects.create(**kwargs)
+
     def update_score(self, test, score):
         """Update the health state, health severity, and health history based on the test name and score.
 
@@ -172,7 +179,7 @@ class HealthTest(models.Model):
         health_test = cls(uid=uid, time=timezone.now(), **kwargs)
         health_test.save()
 
-        h, _ = cls.health_model.objects.get_or_create(uid=uid)
+        h = cls.health_model.get_or_create(uid=uid)
         h.update_score(test=cls.test, score=cls.calculate_score(**kwargs))
 
         return health_test

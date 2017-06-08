@@ -8,7 +8,7 @@ from ..models import BodyHealth
 class HealthUnitTestCase(TestCase):
     def test_update_score(self):
         uid = 123456789
-        health = BodyHealth.objects.get_or_create(uid=uid)[0]
+        health = BodyHealth.get_or_create(uid=uid)
 
         # set heart score to 2, check severity is 2
         health.update_score(test='heart', score=2)
@@ -36,7 +36,7 @@ class HealthUnitTestCase(TestCase):
 
     def test_delete_test(self):
         uid = 123456789
-        health = BodyHealth.objects.get_or_create(uid=uid)[0]
+        health = BodyHealth.get_or_create(uid=uid)
 
         # set heart score to 2, check severity is 2
         health.update_score(test='heart', score=2)
@@ -62,7 +62,7 @@ class HealthUnitTestCase(TestCase):
 
     def test_updated_at(self):
         uid = 123456789
-        health = BodyHealth.objects.get_or_create(uid=uid)[0]
+        health = BodyHealth.get_or_create(uid=uid)
 
         # set heart score to 2, check severity is 2
         health.update_score(test='heart', score=2)
@@ -72,7 +72,7 @@ class HealthUnitTestCase(TestCase):
 
     def test_change_update_date_on_score_change(self):
         uid = 123456789
-        health = BodyHealth.objects.get_or_create(uid=uid)[0]
+        health = BodyHealth.get_or_create(uid=uid)
 
         # set heart score to 2
         health.update_score(test='heart', score=2)
