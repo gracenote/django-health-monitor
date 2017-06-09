@@ -3,6 +3,18 @@
 History
 -------
 
+
+0.2.8 (2017-06-09)
+++++++++++++++++++
+
+* Update docs.
+* Change Travis CI coverage to officially supported combinations of Django and Python. https://docs.djangoproject.com/en/1.11/faq/install/#what-python-version-can-i-use-with-django
+* Add class method ‘get_or_create’ to Health model to address bug when upgrading to Django 1.11.2. (#2)
+* Add Travis CI coverage for Django 1.11.
+* Update docs.
+* Add CI coverage for Python 3.6.
+* Refactor HealthTestView ‘get’ method to reduce number of function calls.
+
 0.2.7 (2017-05-24)
 ++++++++++++++++++
 

@@ -10,7 +10,7 @@ except ImportError:
 
 from setuptools import find_packages
 
-version = '0.2.7'
+version = '0.2.8'
 
 if sys.argv[-1] == 'publish':
     try:
