@@ -23,8 +23,8 @@ try:
 except ImportError:
     from django.views.generic import View
 
-from . import utils
-from .models import HealthTest
+from health_monitor.models import HealthTest
+from health_monitor import utils
 
 
 class HealthView(View):
@@ -32,21 +32,31 @@ class HealthView(View):
         """Get health by uid, group, and/or test."""
         status_code = 200
         if not test and not group and not uid:
-            detail = distutils.util.strtobool(request.GET['detail']) if 'detail' in request.GET.keys() else False
+            if 'detail' in request.GET.keys():
+                detail = distutils.util.strtobool(request.GET['detail'])
+            else:
+                detail = False
             healths = self.health_model.objects.all()
             if detail:
-                response_data = [{'uid': x.uid, 'state': x.state, 'severity': x.severity} for x in healths]
+                response_data = [
+                    {'uid': x.uid, 'state': x.state, 'severity': x.severity}
+                    for x in healths]
             else:
                 response_data = [x.uid for x in healths]
         else:
             try:
                 health = self.health_model.objects.get(uid=uid)
                 if test and group:
-                    state = {k: {x: y for x, y in v.items() if x == test} for k, v in health.state.items() if k == group}
-                    severity = {k: v for k, v in health.severity.items() if k == group}
+                    state = {
+                        k: {x: y for x, y in v.items() if x == test}
+                        for k, v in health.state.items() if k == group}
+                    severity = {
+                        k: v for k, v in health.severity.items() if k == group}
                 elif group:
-                    state = {k: v for k, v in health.state.items() if k == group}
-                    severity = {k: v for k, v in health.severity.items() if k == group}
+                    state = {
+                        k: v for k, v in health.state.items() if k == group}
+                    severity = {
+                        k: v for k, v in health.severity.items() if k == group}
                 else:
                     state = health.state
                     severity = health.severity
@@ -61,7 +71,9 @@ class HealthView(View):
                     'message': str(e)
                 }
                 status_code = 400
-        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+        return HttpResponse(
+            json.dumps(response_data), content_type="application/json",
+            status=status_code)
 
     def delete(self, request, uid=None, group=None, test=None):
         """Delete health by uid, group, and/or test."""
@@ -75,19 +87,25 @@ class HealthView(View):
             elif not test:
                 self.health_model.objects.get(uid=uid).delete_group(group)
                 response_data = {
-                    'message': '{} group deleted from {} health'.format(group, uid)
+                    'message': '{} group deleted from {} health'.format(
+                        group, uid)
                 }
             else:
-                self.health_model.objects.get(uid=uid).delete_group_test(group, test)
+                self.health_model.objects.get(uid=uid).delete_group_test(
+                    group, test)
                 response_data = {
-                    'message': '{} test deleted from {} group in {} health'.format(test, group, uid)
+                    'message':
+                    '{} test deleted from {} group in {} health'.format(
+                        test, group, uid)
                 }
         except Exception as e:
             response_data = {
                 'message': str(e)
             }
             status_code = 400
-        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+        return HttpResponse(
+            json.dumps(response_data), content_type="application/json",
+            status=status_code)
 
 
 class HealthAlarmView(View):
@@ -100,17 +118,23 @@ class HealthAlarmView(View):
                 response_data = {'tests': HealthTest._get_tests(group)}
             else:
                 kwargs = {}
-                for k in ['score', 'aggregate_percent', 'repetition', 'repetition_percent']:
+                for k in [
+                    'score', 'aggregate_percent', 'repetition',
+                    'repetition_percent'
+                ]:
                     if k in request.GET.keys():
                         kwargs[k] = int(request.GET[k])
-                response_data = self.health_alarm_model.calculate_alarms(group=group, test=test, **kwargs)
+                response_data = self.health_alarm_model.calculate_alarms(
+                    group=group, test=test, **kwargs)
         except Exception as e:
                 response_data = {
                     'message': str(e)
                 }
                 status_code = 400
 
-        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+        return HttpResponse(
+            json.dumps(response_data), content_type="application/json",
+            status=status_code)
 
 
 class HealthTestView(View):
@@ -128,21 +152,27 @@ class HealthTestView(View):
                 elif 'uids' in request.GET:
                     kwargs['uids'] = request.GET['uids'].split(',')
                 if 'start_time' in request.GET:
-                    kwargs['start_time'] = utils.iso_to_datetime(request.GET['start_time'])
+                    kwargs['start_time'] = utils.iso_to_datetime(
+                        request.GET['start_time'])
                 if 'end_time' in request.GET:
-                    kwargs['end_time'] = utils.iso_to_datetime(request.GET['end_time'])
+                    kwargs['end_time'] = utils.iso_to_datetime(
+                        request.GET['end_time'])
 
                 response_data = []
                 results = model.get_history(**kwargs)
                 if 'latest' in request.GET and results:
                     latest = distutils.util.strtobool(request.GET['latest'])
-                    results = [results.order_by('time').last()] if latest else model.get_history(**kwargs)
+                    results = [
+                        results.order_by('time').last()
+                    ] if latest else model.get_history(**kwargs)
                 fields = [x.name for x in model._meta.fields if x.name != 'id']
                 for result in results:
                     entry = {}
                     entry['score'] = result.get_score()
                     for field in fields:
-                        entry[field] = utils.datetime_to_iso(getattr(result, field)) if field == 'time' else getattr(result, field)
+                        entry[field] = utils.datetime_to_iso(
+                            getattr(result, field)
+                            ) if field == 'time' else getattr(result, field)
                     response_data.append(entry)
         except Exception as e:
                 response_data = {
@@ -150,7 +180,9 @@ class HealthTestView(View):
                 }
                 status_code = 400
 
-        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+        return HttpResponse(
+            json.dumps(response_data), content_type="application/json",
+            status=status_code)
 
     def post(self, request, uid=None, test=None):
         """Post health test by test and uid."""
@@ -169,10 +201,14 @@ class HealthTestView(View):
         except Exception as e:
             response_data['message'] = str(e)
             status_code = 400
-            return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
+            return HttpResponse(
+                json.dumps(response_data), content_type="application/json",
+                status=status_code)
 
         score = result.get_score()
         response_data['score'] = score
-        response_data['message'] = '{} score changed to {} for uid {}'.format(test, score, uid)
+        response_data['message'] = '{} score changed to {} for uid {}'.format(
+            test, score, uid)
 
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        return HttpResponse(
+            json.dumps(response_data), content_type="application/json")

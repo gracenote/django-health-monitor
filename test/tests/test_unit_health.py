@@ -1,8 +1,23 @@
+"""
+   Copyright 2017 Gracenote
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
 import time
 
 from django.test import TestCase
 
-from ..models import BodyHealth
+from test.models import BodyHealth
 
 
 class HealthUnitTestCase(TestCase):
@@ -22,7 +37,7 @@ class HealthUnitTestCase(TestCase):
         self.assertEqual(health.state['doctor']['sleep']['score'], 3)
         self.assertEqual(health.severity['doctor']['score'], 3)
 
-        # set heart score to 1, check severity is 3 since sleep score is still 3
+        # set heart score to 1, check severity is 3 since sleep score still 3
         health.update_score(test='heart', score=1)
         health = BodyHealth.objects.get(uid=uid)
         self.assertEqual(health.state['doctor']['heart']['score'], 1)
@@ -84,8 +99,10 @@ class HealthUnitTestCase(TestCase):
         time.sleep(0.001)
         health.update_score(test='heart', score=3)
         health = BodyHealth.objects.get(uid=uid)
-        self.assertNotEqual(old_state_time, health.state['doctor']['heart']['updated'])
-        self.assertNotEqual(old_severity_time, health.severity['doctor']['updated'])
+        self.assertNotEqual(
+            old_state_time, health.state['doctor']['heart']['updated'])
+        self.assertNotEqual(
+            old_severity_time, health.severity['doctor']['updated'])
 
         # set heart score to 3, check 'update' does not change
         old_state_time = health.state['doctor']['heart']['updated']
@@ -93,5 +110,7 @@ class HealthUnitTestCase(TestCase):
         time.sleep(0.001)
         health.update_score(test='heart', score=3)
         health = BodyHealth.objects.get(uid=uid)
-        self.assertEqual(old_state_time, health.state['doctor']['heart']['updated'])
-        self.assertEqual(old_severity_time, health.severity['doctor']['updated'])
+        self.assertEqual(
+            old_state_time, health.state['doctor']['heart']['updated'])
+        self.assertEqual(
+            old_severity_time, health.severity['doctor']['updated'])

@@ -1,13 +1,30 @@
+"""
+   Copyright 2017 Gracenote
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
 import json
 
 from django.test import TestCase
 
-from ..models import BodyHealthAlarm, BodyHealth, HeartHealthTest
+from test.models import BodyHealthAlarm, BodyHealth, HeartHealthTest
 
 
 class HealthAlarmModelIntegrationTestCase(TestCase):
     def test_health_test_history_caching(self):
-        """Set up the following test results and get health-test history from health history.
+        """Set up the following test results and get health-test history from
+
+        health history.
 
            t1   t2   t3
         2: 65,  94,  115
@@ -23,15 +40,24 @@ class HealthAlarmModelIntegrationTestCase(TestCase):
         HeartHealthTest.create(uid=2, heartrate=115)
         self.assertEqual(BodyHealth.objects.get(uid=2).history['heart'], [3])
 
-        self.assertEqual(BodyHealth.objects.get(uid=2).get_history(test='heart', repetition=2), [3, 2])
-        self.assertEqual(BodyHealth.objects.get(uid=2).history['heart'], [3, 2])
-        self.assertEqual(BodyHealth.objects.get(uid=2).get_history(test='heart', repetition=3), [3, 2, 1])
-        self.assertEqual(BodyHealth.objects.get(uid=2).history['heart'], [3, 2, 1])
+        self.assertEqual(
+            BodyHealth.objects.get(uid=2).get_history(
+                test='heart', repetition=2),
+            [3, 2])
+        self.assertEqual(
+            BodyHealth.objects.get(uid=2).history['heart'], [3, 2])
+        self.assertEqual(
+            BodyHealth.objects.get(uid=2).get_history(
+                test='heart', repetition=3),
+            [3, 2, 1])
+        self.assertEqual(
+            BodyHealth.objects.get(uid=2).history['heart'], [3, 2, 1])
 
     def test_health_alarm(self):
         """Set up the following test results and resulting health scores.
 
-        Check that health state histories are created in the process after alarms are queried.
+        Check that health state histories are created in the process after
+        alarms are queried.
 
            t1   t2   t3   t4   t5
         1: 61,  63,  81,  69,  62
@@ -50,7 +76,8 @@ class HealthAlarmModelIntegrationTestCase(TestCase):
         HeartHealthTest.create(uid=3, heartrate=119)
 
         # check alarm status
-        result = BodyHealthAlarm.calculate_alarms(group='doctor', test='heart', score=2)
+        result = BodyHealthAlarm.calculate_alarms(
+            group='doctor', test='heart', score=2)
         self.assertEqual({3}, set(result))
 
         # check history
@@ -74,13 +101,17 @@ class HealthAlarmModelIntegrationTestCase(TestCase):
         HeartHealthTest.create(uid=3, heartrate=111)
 
         # check alarm status
-        result = BodyHealthAlarm.calculate_alarms(group='doctor', test='heart', score=2, repetition=2)
+        result = BodyHealthAlarm.calculate_alarms(
+            group='doctor', test='heart', score=2, repetition=2)
         self.assertEqual({2, 3}, set(result))
 
         # check history
-        self.assertEqual([2, 1], BodyHealth.objects.get(uid=1).history['heart'])
-        self.assertEqual([3, 2], BodyHealth.objects.get(uid=2).history['heart'])
-        self.assertEqual([3, 3], BodyHealth.objects.get(uid=3).history['heart'])
+        self.assertEqual(
+            [2, 1], BodyHealth.objects.get(uid=1).history['heart'])
+        self.assertEqual(
+            [3, 2], BodyHealth.objects.get(uid=2).history['heart'])
+        self.assertEqual(
+            [3, 3], BodyHealth.objects.get(uid=3).history['heart'])
 
         # @t4
         HeartHealthTest.create(uid=1, heartrate=69)
@@ -88,9 +119,12 @@ class HealthAlarmModelIntegrationTestCase(TestCase):
         HeartHealthTest.create(uid=3, heartrate=94)
 
         # check history
-        self.assertEqual([1, 2], BodyHealth.objects.get(uid=1).history['heart'])
-        self.assertEqual([3, 3], BodyHealth.objects.get(uid=2).history['heart'])
-        self.assertEqual([2, 3], BodyHealth.objects.get(uid=3).history['heart'])
+        self.assertEqual(
+            [1, 2], BodyHealth.objects.get(uid=1).history['heart'])
+        self.assertEqual(
+            [3, 3], BodyHealth.objects.get(uid=2).history['heart'])
+        self.assertEqual(
+            [2, 3], BodyHealth.objects.get(uid=3).history['heart'])
 
         # @t5
         HeartHealthTest.create(uid=1, heartrate=62)
@@ -98,15 +132,21 @@ class HealthAlarmModelIntegrationTestCase(TestCase):
         HeartHealthTest.create(uid=3, heartrate=59)
 
         # check alarm status
-        result = BodyHealthAlarm.calculate_alarms(group='doctor', test='heart', score=2, repetition=3, repetition_percent=25)
+        result = BodyHealthAlarm.calculate_alarms(
+            group='doctor', test='heart', score=2, repetition=3,
+            repetition_percent=25)
         self.assertEqual({1, 2, 3}, set(result))
-        result = BodyHealthAlarm.calculate_alarms(group='doctor', test='heart', score=2, repetition=3)
+        result = BodyHealthAlarm.calculate_alarms(
+            group='doctor', test='heart', score=2, repetition=3)
         self.assertEqual({2}, set(result))
 
         # check history
-        self.assertEqual([1, 1, 2], BodyHealth.objects.get(uid=1).history['heart'])
-        self.assertEqual([3, 3, 3], BodyHealth.objects.get(uid=2).history['heart'])
-        self.assertEqual([1, 2, 3], BodyHealth.objects.get(uid=3).history['heart'])
+        self.assertEqual(
+            [1, 1, 2], BodyHealth.objects.get(uid=1).history['heart'])
+        self.assertEqual(
+            [3, 3, 3], BodyHealth.objects.get(uid=2).history['heart'])
+        self.assertEqual(
+            [1, 2, 3], BodyHealth.objects.get(uid=3).history['heart'])
 
 
 class HealthAlarmAPIIntegrationTestCase(TestCase):
@@ -160,10 +200,13 @@ class HealthAlarmAPIIntegrationTestCase(TestCase):
         content = json.loads(response.content.decode())
         self.assertEqual({2}, set(content))
 
-        response = self.client.get('/health_alarm/doctor/heart/?score=2&repetition=3&repetition_percent=25')
+        response = self.client.get(
+            '/health_alarm/doctor/heart/' +
+            '?score=2&repetition=3&repetition_percent=25')
         content = json.loads(response.content.decode())
         self.assertEqual({1, 2, 3}, set(content))
 
-        response = self.client.get('/health_alarm/doctor/heart/?score=2&repetition=3')
+        response = self.client.get(
+            '/health_alarm/doctor/heart/?score=2&repetition=3')
         content = json.loads(response.content.decode())
         self.assertEqual({2}, set(content))

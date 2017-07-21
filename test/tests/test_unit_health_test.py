@@ -1,7 +1,22 @@
+"""
+   Copyright 2017 Gracenote
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
 from django.test import TestCase
 from django.utils import timezone
 
-from ..models import BodyHealth, HeartHealthTest, SleepHealthTest
+from test.models import BodyHealth, HeartHealthTest, SleepHealthTest
 
 
 class HealthTestUnitTestCase(TestCase):
@@ -48,9 +63,11 @@ class HealthTestUnitTestCase(TestCase):
         self.assertEqual(4, len(results))
         results = SleepHealthTest.get_history(uids=[1, 2, 3], end_time=time_1)
         self.assertEqual(6, len(results))
-        results = SleepHealthTest.get_history(uids=[1, 2, 3], start_time=time_1, end_time=time_2)
+        results = SleepHealthTest.get_history(
+            uids=[1, 2, 3], start_time=time_1, end_time=time_2)
         self.assertEqual(3, len(results))
-        results = SleepHealthTest.get_history(uids=[1, 2, 3], start_time=time_2)
+        results = SleepHealthTest.get_history(
+            uids=[1, 2, 3], start_time=time_2)
         self.assertEqual(3, len(results))
         results = SleepHealthTest.get_history(uids=[2], start_time=time_1)
         self.assertEqual(2, len(results))

@@ -16,18 +16,28 @@
 
 from django.conf.urls import url
 
-from . import views
+from test import views
 
 
 urlpatterns = [
     url(r'^health/$', views.BodyHealthView.as_view()),
     url(r'^health/(?P<uid>[\d]*)/$', views.BodyHealthView.as_view()),
-    url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/$', views.BodyHealthView.as_view()),
-    url(r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthView.as_view()),
+    url(
+        r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/$',
+        views.BodyHealthView.as_view()),
+    url(
+        r'^health/(?P<uid>[\d]*)/(?P<group>[\w]*)/(?P<test>[\w]*)/$',
+        views.BodyHealthView.as_view()),
     url(r'^health_test/$', views.BodyHealthTestView.as_view()),
     url(r'^health_test/(?P<test>[\w]*)/$', views.BodyHealthTestView.as_view()),
-    url(r'^health_test/(?P<test>[\w]*)/(?P<uid>[\d]*)/$', views.BodyHealthTestView.as_view()),
+    url(
+        r'^health_test/(?P<test>[\w]*)/(?P<uid>[\d]*)/$',
+        views.BodyHealthTestView.as_view()),
     url(r'^health_alarm/$', views.BodyHealthAlarmView.as_view()),
-    url(r'^health_alarm/(?P<group>[\w]*)/$', views.BodyHealthAlarmView.as_view()),
-    url(r'^health_alarm/(?P<group>[\w]*)/(?P<test>[\w]*)/$', views.BodyHealthAlarmView.as_view()),
+    url(
+        r'^health_alarm/(?P<group>[\w]*)/$',
+        views.BodyHealthAlarmView.as_view()),
+    url(
+        r'^health_alarm/(?P<group>[\w]*)/(?P<test>[\w]*)/$',
+        views.BodyHealthAlarmView.as_view()),
 ]
