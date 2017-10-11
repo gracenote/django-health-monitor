@@ -17,6 +17,9 @@ Django Health Monitor
 .. image:: https://img.shields.io/codecov/c/github/gracenote/django-health-monitor/master.svg
     :target: https://codecov.io/gh/gracenote/django-health-monitor
 
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    :target: https://saythanks.io/to/seanchon
+
 A Django application to help track the health of assets within a "system" or "population" and give real-time feedback.
 
 Background
