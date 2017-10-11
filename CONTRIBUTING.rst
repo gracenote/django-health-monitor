@@ -13,7 +13,7 @@ Types of Contributions
 Give Feedback
 ~~~~~~~~~~~~~
 
-How are you using this package? We would love to know. Email s at seanchon dot com with any feedback, suggestions, etc.
+How are you using this package? We would love to know. Email s@seanchon.com with any feedback, suggestions, etc.
 
 Report Bugs
 ~~~~~~~~~~~
