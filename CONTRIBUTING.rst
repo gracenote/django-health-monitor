@@ -10,6 +10,11 @@ You can contribute in many ways:
 Types of Contributions
 ----------------------
 
+Give Feedback
+~~~~~~~~~~~~~
+
+How are you using this package? We would love to know. Email s at seanchon dot com with any feedback, suggestions, etc.
+
 Report Bugs
 ~~~~~~~~~~~
 
@@ -60,34 +65,35 @@ Ready to contribute? Here's how to set up `django-health-monitor` for local deve
 1. Fork the `django-health-monitor` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/django-health-monitor.git
+    $ git clone git@github.com:gracenote/django-health-monitor.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
-    $ mkvirtualenv django-health-monitor
     $ cd django-health-monitor/
-    $ python setup.py develop
+    $ virtualenv venv
+    $ source venv/bin/activate
+    (venv)$ pip install -r requirements_dev.txt
 
 4. Create a branch for local development::
 
-    $ git checkout -b name-of-your-bugfix-or-feature
+    (venv)$ git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass flake8 and the
+5. When you're done making changes, check that your changes pass the
    tests, including testing other Python versions with tox::
 
-        $ flake8 django-health-monitor tests
-        $ python setup.py test
-        $ tox
+        (venv)$ flake8 health_monitor tests
+        (venv)$ python manage.py test
+        (venv)$ tox
 
    To get flake8 and tox, just pip install them into your virtualenv.
 
 6. Commit your changes and push your branch to GitHub::
 
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
+    (venv)$ git add .
+    (venv)$ git commit -m "Your detailed description of your changes."
+    (venv)$ git push origin name-of-your-bugfix-or-feature
 
 7. Submit a pull request through the GitHub website.
 
@@ -109,4 +115,4 @@ Tips
 
 To run a subset of tests::
 
-    $ python -m unittest tests.test_django-health-monitor
+    (venv)$ python manage.py test tests.tests.test_integration_health
