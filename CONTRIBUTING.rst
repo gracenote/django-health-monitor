@@ -67,20 +67,31 @@ Ready to contribute? Here's how to set up `django-health-monitor` for local deve
 
     $ git clone git@github.com:gracenote/django-health-monitor.git
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+3. Install your local copy into a virtualenv. Assuming you have virtualenv installed, this is how you set up your fork for local development::
 
     $ cd django-health-monitor/
     $ virtualenv venv
     $ source venv/bin/activate
     (venv)$ pip install -r requirements_dev.txt
 
-4. Create a branch for local development::
+4. Migrate "tests" application. (Note: A test implementation of this package runs in the tests directory.)::
+
+    (venv)$ python manage.py makemigrations tests
+    (venv)$ python manage.py migrate
+
+5. Run the application locally::
+
+    (venv)$ python manage.py runserver
+
+   Check the endpoints in the browser after running
+
+6. Create a branch for local development::
 
     (venv)$ git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass the
+7. When you're done making changes, check that your changes pass the
    tests, including testing other Python versions with tox::
 
         (venv)$ flake8 health_monitor tests
@@ -89,20 +100,23 @@ Ready to contribute? Here's how to set up `django-health-monitor` for local deve
 
    To get flake8 and tox, just pip install them into your virtualenv.
 
-6. Commit your changes and push your branch to GitHub::
+8. Commit your changes and push your branch to GitHub::
 
     (venv)$ git add .
     (venv)$ git commit -m "Your detailed description of your changes."
     (venv)$ git push origin name-of-your-bugfix-or-feature
 
-7. Submit a pull request through the GitHub website.
+9. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
 
 Before you submit a pull request, check that it meets these guidelines:
 
-1. The pull request should include tests.
+1. The pull request should include tests. This project was inspired by `Readme-Driven
+   Development <https://www.kennethreitz.org/essays/how-i-develop-things-and-why>`_.
+   The current tests were written around the `API Reference
+   <https://django-health-monitor.readthedocs.io/en/latest/api_reference.html>`_.
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
