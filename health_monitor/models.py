@@ -13,23 +13,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+from __future__ import unicode_literals
 from jsonfield import JSONField
 import pytz
 
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from health_monitor import utils
 
 
+@python_2_unicode_compatible
 class Health(models.Model):
     uid = models.IntegerField(primary_key=True, db_index=True)
     state = JSONField(default={}, blank=True, null=True)
     severity = JSONField(default={}, blank=True, null=True)
     history = JSONField(default={}, blank=True, null=True)
 
-    def __unicode__(self):      # For Python 2, use __str__ on Python 3
-        return unicode(self.uid)
+    def __str__(self):
+        return str(self.uid)
 
     def _calculate_severity(self, group):
         """Return a severity calculation.
@@ -210,8 +213,8 @@ class HealthTest(models.Model):
     groups = []
     health_model = Health
 
-    def __unicode__(self):      # For Python 2, use __str__ on Python 3
-        return unicode(self.uid)
+    def __str__(self):
+        return str(self.uid)
 
     @classmethod
     def create(cls, uid, **kwargs):
